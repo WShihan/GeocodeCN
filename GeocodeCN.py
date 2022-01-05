@@ -214,7 +214,7 @@ class GeocodeCN:
         # 先清除原文字
         self.clear()
         try:
-            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"E:\Desktop\GisFile\sheet_text_asset", "*.csv")
+            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"./", "*.csv")
             if file_name:
                 self.file_selected = True
                 self.dlg.le_file.setText(file_name)
