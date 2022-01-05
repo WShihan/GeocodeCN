@@ -16,4 +16,4 @@
 
 ### 效果：
 
-![exporter](F:\md资源\exporter-16413621775181.gif)
+![exporter](./help/shot.gif)
