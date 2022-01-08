@@ -88,18 +88,17 @@ class GeocodeCN:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('GeocodeCN', message)
 
-
     def add_action(
-        self,
-        icon_path,
-        text,
-        callback,
-        enabled_flag=True,
-        add_to_menu=True,
-        add_to_toolbar=True,
-        status_tip=None,
-        whats_this=None,
-        parent=None):
+            self,
+            icon_path,
+            text,
+            callback,
+            enabled_flag=True,
+            add_to_menu=True,
+            add_to_toolbar=True,
+            status_tip=None,
+            whats_this=None,
+            parent=None):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -176,7 +175,6 @@ class GeocodeCN:
         # will be set False in run()
         self.first_start = True
 
-
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
@@ -185,15 +183,14 @@ class GeocodeCN:
                 action)
             self.iface.removeToolBarIcon(action)
 
-
     def run(self):
         """Run method that performs all the real work"""
-
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:
             self.first_start = False
             self.dlg = GeocodeCNDialog()
+            # 绑定信号
             self.dlg.btn_file.clicked.connect(self.select_csv)
             self.dlg.btn_start.clicked.connect(self.start)
             self.dlg.btn_export.clicked.connect(self.export)
@@ -211,40 +208,52 @@ class GeocodeCN:
             pass
 
     def select_csv(self):
-        # 先清除原文字
+        """
+        选择文件
+        """
         self.clear()
         try:
-            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"E:\Desktop\GisFile\sheet_text_asset", "*.csv")
+            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"E:\Desktop\GisFile\sheet_text_asset","*.csv")
+            # 是否选择文件
             if file_name:
                 self.file_selected = True
                 self.dlg.le_file.setText(file_name)
+                # 引入pandas 的目的是获取csv文件的总行数
                 df = pd.read_csv(file_name, encoding="gbk")
                 self.dlg.pb.setMaximum(df.count()[0])
+                # 获取之后手动删除，释放资源
                 del df
+                # 创建reader对象，获取显示字段
                 self.reader = csv.DictReader(open(self.dlg.le_file.text(), 'r', encoding="gbk"))
                 self.fields = self.reader.fieldnames
                 self.dlg.cb.addItems(self.fields)
             else:
-                raise FileNotFoundError("未选择文件！")
+                pass
         except Exception as e:
             QMessageBox.information(self.dlg, "状态", str(e), QMessageBox.Yes)
+
     def start(self):
         """
-        编码
+        开始按钮事件
         """
         try:
+            # 是否已选择文件
             if self.file_selected:
                 col_sele = self.dlg.cb.currentText()
+                # 创建线程并绑定信号
                 self.th = Crs_gen(self.reader, col_sele)
                 self.th.signal.connect(self.collect_and_print)
-                self.th.finished.connect(lambda :self.dlg.pb.setValue(0))
+                self.th.finished.connect(lambda: self.dlg.pb.setValue(0))
                 self.th.start()
             else:
                 raise FileNotFoundError("未选择文件！")
         except Exception as e:
-            QMessageBox.critical(self.dlg , '状态' , str(e) , QMessageBox.Ok)
+            QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Ok)
 
     def collect_and_print(self, location):
+        """
+        自定义信号槽，接收子线程坐标信号
+        """
         value = self.dlg.pb.value()
         self.dlg.pb.setValue(value + 1)
         if len(location) != 0:
@@ -252,15 +261,17 @@ class GeocodeCN:
             address = location[0]
             attr = location[1]
             self.locs.append(attr + loc)
-            self.dlg.tb_loc.append("地址：{}\t经度：{}\t纬度：{}".format(address, loc[0], loc[1]))
-            # self.dlg.tb_loc.setText(str(len(self.locs)))
+            # 窗口显示
+            self.dlg.tb_loc.append("地址：{:<30}\t经度：{}\t纬度：{}".format(address, loc[0], loc[1]))
         else:
             pass
 
-
-
     def export(self):
+        """
+        导出为csv文件
+        """
         try:
+            # 是否存在已编码数据
             if len(self.locs) != 0:
                 output_file, _filter = QFileDialog.getSaveFileName(self.dlg, "另存为csv", "", "*.csv")
                 if output_file:
@@ -268,6 +279,7 @@ class GeocodeCN:
                     writer.writerow(self.fields + ['lon', 'lat'])
                     for r in self.locs:
                         writer.writerow(r)
+                    # 提醒并修改窗口标题
                     QMessageBox.information(self.dlg, '状态', '保存成功！', QMessageBox.Yes)
                     self.dlg.setWindowTitle("GeocodeCN-已保存")
                 else:
@@ -275,13 +287,18 @@ class GeocodeCN:
             else:
                 raise FileNotFoundError("未开始编码！")
         except Exception as e:
-            QMessageBox.critical(self.dlg, '状态',str(e), QMessageBox.Yes)
-
+            QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Yes)
 
     def add_lyr(self):
+        """
+        添加临时图层至地图窗口
+        """
         try:
+            # 是否含有编码数据
             if len(self.locs) != 0:
+                # 创建临时图层
                 lyr = QgsVectorLayer("Point", "geocode_temp_lyr", "memory")
+                # 添加属性字段
                 pr = lyr.dataProvider()
                 attr = [QgsField(i, QVariant.String) for i in self.fields + ['lon', 'lat']]
                 pr.addAttributes(attr)
@@ -289,20 +306,25 @@ class GeocodeCN:
                 for r in self.locs:
                     y = r[-1]
                     x = r[-2]
+                    # 创建要素
                     f = QgsFeature()
+                    # 设置要素几何
                     f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x, y)))
+                    # 添加字段数据
                     f.setAttributes(r)
                     pr.addFeature(f)
                 lyr.updateExtents()
+                # 添加至地图
                 QgsProject.instance().addMapLayer(lyr)
                 QMessageBox.information(self.dlg, "状态", "添加图层成功！", QMessageBox.Yes)
             else:
                 raise ValueError("无编码数据！")
-
         except Exception as e:
             QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Yes)
-
     def clear(self):
+        """
+        清除窗口信息
+        """
         self.dlg.le_file.setText("")
         self.dlg.tb_loc.setText("")
         self.file_selected = False

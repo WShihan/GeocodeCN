@@ -24,7 +24,7 @@ class POI(object):
         self.confidence = confidence
 
 class Baidu():
-    def __init__(self, ak="iMKmLsBjhGgFGAqUP0xGp0ztDOe9tfaH", transform=None):
+    def __init__(self, ak="9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm", transform=None):
         """:arg
         ak: appKey
         transform: 指定坐标转换方式
