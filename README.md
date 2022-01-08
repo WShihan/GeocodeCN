@@ -16,4 +16,4 @@
 
 ### 效果：
 
-![exporter](./help/shot.gif)
+![shot](./help/shot.gif)
