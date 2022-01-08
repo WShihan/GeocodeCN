@@ -238,6 +238,13 @@
        </item>
       </layout>
      </item>
+     <item>
+      <widget class="QProgressBar" name="pb">
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

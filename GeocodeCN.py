@@ -27,8 +27,8 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry, QgsPointXY, QgsProject
 from qgis.PyQt.QtWidgets import QFileDialog, QAction, QMessageBox
-import json
-from .gcs import Baidu
+import pandas as pd
+from .gcs import Baidu, Crs_gen
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
@@ -214,10 +214,13 @@ class GeocodeCN:
         # 先清除原文字
         self.clear()
         try:
-            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"./", "*.csv")
+            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"E:\Desktop\GisFile\sheet_text_asset", "*.csv")
             if file_name:
                 self.file_selected = True
                 self.dlg.le_file.setText(file_name)
+                df = pd.read_csv(file_name, encoding="gbk")
+                self.dlg.pb.setMaximum(df.count()[0])
+                del df
                 self.reader = csv.DictReader(open(self.dlg.le_file.text(), 'r', encoding="gbk"))
                 self.fields = self.reader.fieldnames
                 self.dlg.cb.addItems(self.fields)
@@ -232,18 +235,29 @@ class GeocodeCN:
         try:
             if self.file_selected:
                 col_sele = self.dlg.cb.currentText()
-                baidu = Baidu()
-                for r in self.reader:
-                    name = r[col_sele]
-                    attr = [r[i] for i in r.keys()]
-                    res = baidu.get_one(name)
-                    if res['status'] == 1:
-                        self.locs.append(attr + res['loc'])
-                self.dlg.tb_loc.setText(str(self.fields + ["lon", "lat"]) +'\n'  + str(self.locs))
+                self.th = Crs_gen(self.reader, col_sele)
+                self.th.signal.connect(self.collect_and_print)
+                self.th.finished.connect(lambda :self.dlg.pb.setValue(0))
+                self.th.start()
             else:
                 raise FileNotFoundError("未选择文件！")
         except Exception as e:
             QMessageBox.critical(self.dlg , '状态' , str(e) , QMessageBox.Ok)
+
+    def collect_and_print(self, location):
+        value = self.dlg.pb.value()
+        self.dlg.pb.setValue(value + 1)
+        if len(location) != 0:
+            loc = location[-1]
+            address = location[0]
+            attr = location[1]
+            self.locs.append(attr + loc)
+            self.dlg.tb_loc.append("地址：{}\t经度：{}\t纬度：{}".format(address, loc[0], loc[1]))
+            # self.dlg.tb_loc.setText(str(len(self.locs)))
+        else:
+            pass
+
+
 
     def export(self):
         try:
@@ -257,31 +271,33 @@ class GeocodeCN:
                     QMessageBox.information(self.dlg, '状态', '保存成功！', QMessageBox.Yes)
                     self.dlg.setWindowTitle("GeocodeCN-已保存")
                 else:
-                    raise FileNotFoundError("文件未选择！")
+                    pass
             else:
                 raise FileNotFoundError("未开始编码！")
         except Exception as e:
             QMessageBox.critical(self.dlg, '状态',str(e), QMessageBox.Yes)
-        finally: pass
+
+
     def add_lyr(self):
         try:
-            lyr = QgsVectorLayer("Point", "geocode_temp_lyr", "memory")
-            pr = lyr.dataProvider()
-            attr = [QgsField(i, QVariant.String) for i in self.fields + ['lon', 'lat']]
-            pr.addAttributes(attr)
-            lyr.updateFields()
-
-            for r in self.locs:
-                y = r[-1]
-                x = r[-2]
-                f = QgsFeature()
-                f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x, y)))
-                f.setAttributes(r)
-                pr.addFeature(f)
-            lyr.updateExtents()
-            QgsProject.instance().addMapLayer(lyr)
-            QMessageBox.information(self.dlg, "状态", "添加图层成功！", QMessageBox.Yes)
-            self.clear()
+            if len(self.locs) != 0:
+                lyr = QgsVectorLayer("Point", "geocode_temp_lyr", "memory")
+                pr = lyr.dataProvider()
+                attr = [QgsField(i, QVariant.String) for i in self.fields + ['lon', 'lat']]
+                pr.addAttributes(attr)
+                lyr.updateFields()
+                for r in self.locs:
+                    y = r[-1]
+                    x = r[-2]
+                    f = QgsFeature()
+                    f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x, y)))
+                    f.setAttributes(r)
+                    pr.addFeature(f)
+                lyr.updateExtents()
+                QgsProject.instance().addMapLayer(lyr)
+                QMessageBox.information(self.dlg, "状态", "添加图层成功！", QMessageBox.Yes)
+            else:
+                raise ValueError("无编码数据！")
 
         except Exception as e:
             QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Yes)
@@ -290,5 +306,7 @@ class GeocodeCN:
         self.dlg.le_file.setText("")
         self.dlg.tb_loc.setText("")
         self.file_selected = False
+        self.dlg.setWindowTitle("GeocodeCN")
+        self.locs.clear()
         self.dlg.cb.clear()
         self.locs.clear()

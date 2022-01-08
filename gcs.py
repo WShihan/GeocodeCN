@@ -6,7 +6,7 @@
 import requests
 import json
 from .utils import  bd09_to_wgs84,bd09_to_gcj02
-
+from qgis.PyQt.QtCore import QThread, pyqtSignal
 
 class POI(object):
     def __init__(self, name, lon, lat, confidence, attr):
@@ -75,7 +75,7 @@ class Baidu():
                 else:
                     self.failed += 1
                     location = ['NA', 'NA']
-                    return {'status':0, "loc": location}
+                    return {'status': 0, "loc": location}
         except Exception as e:
             print(e)
 
@@ -84,8 +84,24 @@ class Baidu():
         批量获取坐标
         """
         pass
+class Crs_gen(QThread):
+    signal = pyqtSignal(list)
+    def __init__(self, reader,col_select):
+        super(Crs_gen, self).__init__()
+        self.reader = reader
+        self.col_select = col_select
+        self.baidu = Baidu()
 
 
+    def run(self):
+        for r in self.reader:
+            address = r[self.col_select]
+            attr = [r[i] for i in r.keys()]
+            res = self.baidu.get_one(address)
+            if res['status'] == 1:
+                self.signal.emit([address, attr, res['loc']])
+            else:
+                self.signal.emit([])
 
 
 
