@@ -20,7 +20,7 @@
 >
 > * 下载zip文件
 >
->   ![image-20220110124451366](https://s2.loli.net/2022/01/10/VWP2zMaL1FDpTxe.png)
+>   ![image-20220110124451366](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/VWP2zMaL1FDpTxe.png)
 
 
 
@@ -28,7 +28,7 @@
 
 > 打开 Qgis --> Settings --> User Profiles --> Open Active Profile Folder
 >
-> ![image-20220110122357148](https://s2.loli.net/2022/01/10/2V9AmtUTMBZEyxR.png)
+> ![image-20220110122357148](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/2V9AmtUTMBZEyxR.png)
 >
 > 之后进入 Python --> Plugins 目录下，将仓库移动到此处。
 
@@ -36,11 +36,11 @@
 
 > 2.2.1选中csv文件后，指定文件中那一列作为地址进行匹配
 >
-> ![start](https://s2.loli.net/2022/01/10/KocL9Pvth1pMquX.gif)
+> ![start](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/KocL9Pvth1pMquX.gif)
 >
 > 2.2.2 匹配成功后可以生成点图层或者另存为csv文件
 >
-> ![export](https://s2.loli.net/2022/01/10/Kme14OroIJQGqav.gif)
+> ![export](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/Kme14OroIJQGqav.gif)
 >
 > 2.2.3 指定输出坐标，这里需要修改源码，进入插件（仓库）目录下，找到gcs.py文件，修改transform参数：
 >
@@ -48,7 +48,7 @@
 > * bd2wgs：表示转为WGS84坐标系
 > * bd2gcj：表示转为国测局坐标系
 >
-> ![image-20220110124548760](https://s2.loli.net/2022/01/10/eAThH18ot6ZuUfQ.png)
+> ![image-20220110124548760](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/eAThH18ot6ZuUfQ.png)
 
 
 
