@@ -218,15 +218,11 @@ class GeocodeCN:
             if file_name:
                 self.file_selected = True
                 self.dlg.le_file.setText(file_name)
-                # 引入pandas 的目的是获取csv文件的总行数
-                df = pd.read_csv(file_name, encoding="gbk")
-                self.dlg.pb.setMaximum(df.count()[0])
-                # 获取之后手动删除，释放资源
-                del df
-                # 创建reader对象，获取显示字段
-                self.reader = csv.DictReader(open(self.dlg.le_file.text(), 'r', encoding="gbk"))
-                self.fields = self.reader.fieldnames
+                reader = csv.DictReader(open(self.dlg.le_file.text(), 'r', encoding="gbk"))
+                self.fields = reader.fieldnames
+                self.address_list = list(reader)
                 self.dlg.cb.addItems(self.fields)
+                self.dlg.pb.setMaximum(len(self.address_list))
             else:
                 pass
         except Exception as e:
@@ -241,7 +237,7 @@ class GeocodeCN:
             if self.file_selected:
                 col_sele = self.dlg.cb.currentText()
                 # 创建线程并绑定信号
-                self.th = Crs_gen(self.reader, col_sele)
+                self.th = Crs_gen(self.address_list, col_sele)
                 self.th.signal.connect(self.collect_and_print)
                 self.th.finished.connect(lambda: self.dlg.pb.setValue(0))
                 self.th.start()
