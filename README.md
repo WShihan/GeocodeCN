@@ -1,4 +1,10 @@
-## GeocodeCN
+## 关于
+
+![icon](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png)
+
+<div align=center >GeocodeCN</div>
+
+
 
 一个Qgis插件，用于地理编码，地址——> 坐标，其特点如下
 
@@ -6,7 +12,9 @@
 > 2. 坐标转换，具备：百度坐标-->WGS84，百度坐标-->GCJ2000
 > 3. 直接生成Qgis临时点图层或导出为csv文件
 
-## 使用方法：
+***
+
+## 使用：
 
 ### 2.1 安装插件
 
@@ -30,19 +38,27 @@
 >
 > ![image-20220110122357148](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/2V9AmtUTMBZEyxR.png)
 >
-> 之后进入 Python --> Plugins 目录下，将仓库移动到此处。
+> 之后进入 Python --> Plugins 目录下，将仓库移动到此处，接下来在Plugins，勾选它。
+>
+> ![image-20220112234611216](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/image-20220112234611216.png)
+
+
 
 ### 2.2 使用插件
 
-> 2.2.1选中csv文件后，指定文件中那一列作为地址进行匹配
+> 2.2.1选中csv文件后，指定表格中哪一列作为地址进行匹配。
 >
 > ![start](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/KocL9Pvth1pMquX.gif)
 >
-> 2.2.2 匹配成功后可以生成点图层或者另存为csv文件
+> 
+>
+> 2.2.2 匹配成功后可以生成点图层或者另存为csv文件。
 >
 > ![export](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/Kme14OroIJQGqav.gif)
 >
-> 2.2.3 指定输出坐标，这里需要修改源码，进入插件（仓库）目录下，找到gcs.py文件，修改transform参数：
+> 
+>
+> 2.2.3 指定输出坐标，这里需要修改源码，进入插件目录下，找到gcs.py文件，修改transform参数：
 >
 > * None :表示原始坐标系，即百度坐标系
 > * bd2wgs：表示转为WGS84坐标系
@@ -52,8 +68,11 @@
 
 
 
+***
+
 ## 说明
 
 > * 依赖百度地图开放接口，具体坐标精度请参考其官网。
-> * 建议匹配地址尽量详细，如：xxx省/市/区xxx街道xxx地。
+> * 地址匹配尽量详细，如：xxx省/市/区xxx街道xxx地。
 > * 坐标转换依赖另一个库：https://github.com/wandergis/coordtransform 
+> * 如果地址匹配失败的话，插件会自动忽略。
