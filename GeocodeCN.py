@@ -234,7 +234,7 @@ class GeocodeCN:
         """
         try:
             # 是否已选择文件
-            if self.file_selected:
+            if self.file_selected and len(self.locs) == 0:
                 col_sele = self.dlg.cb.currentText()
                 # 创建线程并绑定信号
                 self.th = Crs_gen(self.address_list, col_sele)
@@ -242,7 +242,7 @@ class GeocodeCN:
                 self.th.finished.connect(lambda: self.dlg.pb.setValue(0))
                 self.th.start()
             else:
-                raise FileNotFoundError("未选择文件！")
+                raise FileNotFoundError("请选择匹配文件或清除当前数据！")
         except Exception as e:
             QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Ok)
 

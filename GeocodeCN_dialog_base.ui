@@ -38,6 +38,9 @@
            <pointsize>12</pointsize>
           </font>
          </property>
+         <property name="toolTip">
+          <string>选择csv文件</string>
+         </property>
          <property name="text">
           <string>选择</string>
          </property>
@@ -149,6 +152,9 @@
            <pointsize>12</pointsize>
           </font>
          </property>
+         <property name="toolTip">
+          <string>开始编码</string>
+         </property>
          <property name="text">
           <string>开始</string>
          </property>
@@ -181,6 +187,9 @@
            <pointsize>12</pointsize>
           </font>
          </property>
+         <property name="toolTip">
+          <string>生成图层</string>
+         </property>
          <property name="text">
           <string>添加到地图</string>
          </property>
@@ -205,6 +214,9 @@
            <family>黑体</family>
            <pointsize>12</pointsize>
           </font>
+         </property>
+         <property name="toolTip">
+          <string>导出为csv文件</string>
          </property>
          <property name="text">
           <string>导出为</string>
@@ -231,6 +243,9 @@
            <pointsize>12</pointsize>
           </font>
          </property>
+         <property name="toolTip">
+          <string>清除当前编码数据</string>
+         </property>
          <property name="text">
           <string>清除</string>
          </property>
@@ -240,6 +255,9 @@
      </item>
      <item>
       <widget class="QProgressBar" name="pb">
+       <property name="toolTip">
+        <string>编码进度</string>
+       </property>
        <property name="value">
         <number>0</number>
        </property>
