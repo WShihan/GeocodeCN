@@ -1,6 +1,6 @@
 ## 关于
 
-<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" alt="icon" style="zoom: 25%;" />
+<img align=center src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" style="zoom:30%">
 
 <div align=center >GeocodeCN</div>
 
@@ -14,7 +14,7 @@
 
 ***
 
-## 使用：
+## 使用步骤：
 
 ### 2.1 安装插件
 
