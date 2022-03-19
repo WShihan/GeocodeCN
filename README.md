@@ -1,6 +1,6 @@
 ## 关于
 
-<div align=center><img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png"/></div>
+<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" alt="icon" style="zoom: 25%;" />
 
 <div align=center >GeocodeCN</div>
 
@@ -73,6 +73,6 @@
 ## 说明
 
 > * 依赖百度地图开放接口，具体坐标精度请参考其官网。
-> * 地址匹配尽量详细，如：xxx省/市/区xxx街道xxx地。
-> * 坐标转换依赖另一个库：https://github.com/wandergis/coordtransform 
-> * 如果地址匹配失败的话，插件会自动忽略。
+> * 地址匹配尽量详细，如：xxx省/市/区xxx街道xxx地，若某地址未匹配成功，插件会自动省略。
+> * 坐标转换依赖另一个开源库：https://github.com/wandergis/coordtransform 
+> * 插件部分功能还没实现，持续更新哦，欢迎你的代码提交。
