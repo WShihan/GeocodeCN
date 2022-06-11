@@ -8,6 +8,7 @@ import json
 from .utils import  bd09_to_wgs84,bd09_to_gcj02
 from qgis.PyQt.QtCore import QThread, pyqtSignal
 
+
 class POI(object):
     def __init__(self, name, lon, lat, confidence, attr):
         """:arg
@@ -22,6 +23,7 @@ class POI(object):
         self.lat = lat
         self.attr = attr
         self.confidence = confidence
+
 
 class Baidu():
     def __init__(self, ak="9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm", transform=None):
@@ -40,7 +42,6 @@ class Baidu():
         self.trans = transform
         self.made = 0
         self.failed = 0
-
 
     def get_one(self, address) ->POI:
         """
@@ -84,6 +85,8 @@ class Baidu():
         批量获取坐标
         """
         pass
+
+
 class Crs_gen(QThread):
     signal = pyqtSignal(list)
     def __init__(self, reader,col_select):
@@ -91,7 +94,6 @@ class Crs_gen(QThread):
         self.reader = reader
         self.col_select = col_select
         self.baidu = Baidu()
-
 
     def run(self):
         for r in self.reader:
@@ -102,7 +104,6 @@ class Crs_gen(QThread):
                 self.signal.emit([address, attr, res['loc']])
             else:
                 self.signal.emit([])
-
 
 
 if __name__ == '__main__':

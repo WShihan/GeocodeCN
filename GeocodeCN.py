@@ -196,6 +196,7 @@ class GeocodeCN:
             self.dlg.btn_export.clicked.connect(self.export)
             self.dlg.btn_add.clicked.connect(self.add_lyr)
             self.dlg.btn_clear.clicked.connect(self.clear)
+            self.dlg.btnSingle.clicked.connect(self.single)
 
         # show the dialog
         self.dlg.show()
@@ -228,6 +229,18 @@ class GeocodeCN:
         except Exception as e:
             QMessageBox.information(self.dlg, "状态", str(e), QMessageBox.Yes)
 
+    def single(self):
+        try:
+            baidu = Baidu()
+            address = self.dlg.leAddress.text()
+            res = baidu.get_one(address)
+            if res['status'] == 1:
+                self.dlg.leLocation.setText( str(res['loc'][0]) + "," + str(res['loc'][1]))
+            else:
+                self.dlg.leLocation.setText("无数据！")
+        except Exception as e:
+            QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Ok)
+
     def start(self):
         """
         开始按钮事件
@@ -258,7 +271,7 @@ class GeocodeCN:
             attr = location[1]
             self.locs.append(attr + loc)
             # 窗口显示
-            self.dlg.tb_loc.append("地址：{:<30}\t经度：{}\t纬度：{}".format(address, loc[0], loc[1]))
+            self.dlg.tb_loc.append("地址：{:<50}\n经度：{}\t纬度：{} \n{:-<70}".format(address, loc[0], loc[1], ""))
         else:
             pass
 
@@ -317,6 +330,7 @@ class GeocodeCN:
                 raise ValueError("无编码数据！")
         except Exception as e:
             QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Yes)
+
     def clear(self):
         """
         清除窗口信息
