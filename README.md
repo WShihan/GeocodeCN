@@ -48,23 +48,25 @@
 
 > 2.2.1选中csv文件后，指定表格中哪一列作为地址进行匹配。
 >
-> ![动画2](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/%E5%8A%A8%E7%94%BB2.gif)
+> ![操作](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/%E6%93%8D%E4%BD%9C.gif)
 >
 > 
 >
 > 2.2.2 匹配成功后可以生成点图层或者另存为csv文件。
 >
-> ![动画](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/%E5%8A%A8%E7%94%BB.gif)
+> ![保存和添加图层](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/%E4%BF%9D%E5%AD%98%E5%92%8C%E6%B7%BB%E5%8A%A0%E5%9B%BE%E5%B1%82.gif)
 >
 > 
 >
-> 2.2.3 指定输出坐标，这里需要修改源码，进入插件目录下，找到gcs.py文件，修改transform参数：
+> 2.2.3 不同坐标系结果对比
 >
-> * None :表示原始坐标系，即百度坐标系
-> * bd2wgs：表示转为WGS84坐标系
-> * bd2gcj：表示转为国测局坐标系
+> ![image-20220621025412703](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220621025412703.png)
 >
-> ![image-20220110124548760](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/eAThH18ot6ZuUfQ.png)
+> 2.2.4 单各地址匹配
+>
+> 输入地址，点击箭头即可匹配地址，坐标系为【批量匹配】模式下选择的坐标系。
+>
+> <img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220621030318805.png" alt="image-20220621030318805" style="zoom:50%;" />
 
 
 

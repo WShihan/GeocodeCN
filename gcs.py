@@ -5,7 +5,7 @@
 """
 import requests
 import json
-from .utils import  bd09_to_wgs84,bd09_to_gcj02
+from .utils import  bd09_to_wgs84,bd09_to_gcj02, CrsTypeEnum
 from qgis.PyQt.QtCore import QThread, pyqtSignal
 
 
@@ -26,7 +26,7 @@ class POI(object):
 
 
 class Baidu():
-    def __init__(self, ak="9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm", transform=None):
+    def __init__(self, ak="9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm", transform=CrsTypeEnum.bd):
         """:arg
         ak: appKey
         transform: 指定坐标转换方式
@@ -42,6 +42,14 @@ class Baidu():
         self.trans = transform
         self.made = 0
         self.failed = 0
+
+    @property
+    def transform(self):
+        return self.trans
+
+    @transform.setter
+    def transform(self, value):
+        self.trans = value
 
     def get_one(self, address) ->POI:
         """
@@ -63,9 +71,9 @@ class Baidu():
                     res_json = json.loads(res.text)['result']
                     loc_raw = res_json['location']
                     comprehension = res_json['comprehension']
-                    if self.trans == 'bd2wgs':
+                    if self.trans == CrsTypeEnum.bd2wgs:
                         loc = bd09_to_wgs84(loc_raw['lng'], loc_raw['lat'])
-                    elif self.trans == 'bd2gcj':
+                    elif self.trans == CrsTypeEnum.bd2gcj:
                         loc = bd09_to_gcj02(loc_raw['lng'], loc_raw['lat'])
                     else:
                         loc = [loc_raw['lng'], loc_raw['lat']]
@@ -89,11 +97,11 @@ class Baidu():
 
 class Crs_gen(QThread):
     signal = pyqtSignal(list)
-    def __init__(self, reader,col_select):
+    def __init__(self, reader,col_select, baidu:Baidu):
         super(Crs_gen, self).__init__()
         self.reader = reader
         self.col_select = col_select
-        self.baidu = Baidu()
+        self.baidu = baidu
 
     def run(self):
         for r in self.reader:

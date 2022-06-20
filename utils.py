@@ -6,6 +6,7 @@ import urllib.parse
 from urllib import request
 import os
 import threading
+from enum import Enum
 
 
 x_pi = 3.14159265358979324 * 3000.0 / 180.0
@@ -196,8 +197,19 @@ class MyThread(threading.Thread):
         except BaseException:
             return None
 
+
+class CrsTypeEnum(Enum):
+    bd = 0
+    bd2wgs = 1
+    bd2gcj = 2
+
+
+
+
+
+
 if __name__ == '__main__':
     lng = 128.543
     lat = 37.065
     res = bd09_to_wgs84(lng,lat)
-    print(res)
+    print(CrsTypeEnum.bd2wgs)

@@ -29,6 +29,7 @@ from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry, QgsPoin
 from qgis.PyQt.QtWidgets import QFileDialog, QAction, QMessageBox
 import pandas as pd
 from .gcs import Baidu, Crs_gen
+from .utils import  CrsTypeEnum
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
@@ -72,6 +73,7 @@ class GeocodeCN:
         self.first_start = None
         self.locs = []
         self.file_selected = False
+        self.crsMap = {"百度坐标系": CrsTypeEnum.bd, "WGS84": CrsTypeEnum.bd2wgs, "国测局坐标系": CrsTypeEnum.bd2gcj}
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -230,27 +232,30 @@ class GeocodeCN:
             QMessageBox.information(self.dlg, "状态", str(e), QMessageBox.Yes)
 
     def single(self):
+        """
+        单一匹配地址
+        """
         try:
-            baidu = Baidu()
+            crs = self.crsMap[self.dlg.cb_crs.currentText()]
+            baidu = Baidu(transform=crs)
             address = self.dlg.leAddress.text()
             res = baidu.get_one(address)
             if res['status'] == 1:
                 self.dlg.leLocation.setText( str(res['loc'][0]) + "," + str(res['loc'][1]))
             else:
-                self.dlg.leLocation.setText("无数据！")
+                raise Exception("无地址数据！")
         except Exception as e:
-            QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Ok)
+            QMessageBox.information(self.dlg, '状态', str(e), QMessageBox.Ok)
 
     def start(self):
         """
         开始按钮事件
         """
         try:
-            # 是否已选择文件
             if self.file_selected and len(self.locs) == 0:
                 col_sele = self.dlg.cb.currentText()
-                # 创建线程并绑定信号
-                self.th = Crs_gen(self.address_list, col_sele)
+                crs = self.crsMap[self.dlg.cb_crs.currentText()]
+                self.th = Crs_gen(self.address_list, col_sele, Baidu(transform=crs))
                 self.th.signal.connect(self.collect_and_print)
                 self.th.finished.connect(lambda: self.dlg.pb.setValue(0))
                 self.th.start()
@@ -270,8 +275,7 @@ class GeocodeCN:
             address = location[0]
             attr = location[1]
             self.locs.append(attr + loc)
-            # 窗口显示
-            self.dlg.tb_loc.append("地址：{:<50}\n经度：{}\t纬度：{} \n{:-<70}".format(address, loc[0], loc[1], ""))
+            self.dlg.tb_loc.append("地址：{:<50}\n经度：{}\t纬度：{} \n{:-<50}".format(address, loc[0], loc[1], ""))
         else:
             pass
 
@@ -292,9 +296,9 @@ class GeocodeCN:
                     QMessageBox.information(self.dlg, '状态', '保存成功！', QMessageBox.Yes)
                     self.dlg.setWindowTitle("GeocodeCN-已保存")
                 else:
-                    pass
+                    raise Exception("保持出错！")
             else:
-                raise FileNotFoundError("未开始编码！")
+                raise FileNotFoundError("无坐标数据！")
         except Exception as e:
             QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Yes)
 
@@ -327,7 +331,7 @@ class GeocodeCN:
                 QgsProject.instance().addMapLayer(lyr)
                 QMessageBox.information(self.dlg, "状态", "添加图层成功！", QMessageBox.Yes)
             else:
-                raise ValueError("无编码数据！")
+                raise ValueError("无坐标数据！")
         except Exception as e:
             QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Yes)
 
