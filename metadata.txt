@@ -5,15 +5,15 @@
 [general]
 name=GeocodeCN
 qgisMinimumVersion=3.0
-description=crs getter
-version=0.1
-author=ShihanW
+description=地址/address --> 坐标/coordinates
+version=0.2
+author=WangShihan
 email=3443327820@qq.com
 
-about=get coordinate from baidu
+about=获取地址在百度地图中的坐标
 
-tracker=http://bugs
-repository=http://repo
+tracker=https://github.com/WShihan/GeocodeCN
+repository=https://github.com/WShihan/GeocodeCN
 # End of mandatory metadata
 
 # Recommended items:
@@ -23,9 +23,9 @@ hasProcessingProvider=no
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=python
+tags=baidu,map , coordinate
 
-homepage=http://homepage
+homepage=https://github.com/WShihan/GeocodeCN
 category=Plugins
 icon=icon.png
 # experimental flag
