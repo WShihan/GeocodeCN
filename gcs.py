@@ -5,7 +5,7 @@
 """
 import requests
 import json
-from .utils import  bd09_to_wgs84,bd09_to_gcj02, CrsTypeEnum
+from .utils import bd09_to_wgs84, bd09_to_gcj02, CrsTypeEnum
 from qgis.PyQt.QtCore import QThread, pyqtSignal
 
 
@@ -25,14 +25,15 @@ class POI(object):
         self.confidence = confidence
 
 
-class Baidu():
-    def __init__(self, ak="9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm", transform=CrsTypeEnum.bd):
+class Baidu:
+    def __init__(self, ak, transform=CrsTypeEnum.bd):
         """:arg
         ak: appKey
         transform: 指定坐标转换方式
         """
         self.session = requests.session()
-        self.ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36'
+        self.ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) ' \
+                  'Chrome/88.0.4324.146 Safari/537.36 '
         self.url = 'http://api.map.baidu.com/geocoding/v3/'
         self.__params = {
             'address': '',
@@ -51,7 +52,7 @@ class Baidu():
     def transform(self, value):
         self.trans = value
 
-    def get_one(self, address) ->POI:
+    def get_one(self, address):
         """
         获取单一坐标
         :arg
@@ -79,7 +80,7 @@ class Baidu():
                         loc = [loc_raw['lng'], loc_raw['lat']]
                     self.made += 1
                     location = [loc[0], loc[1]]
-                    return {'status':1, "loc": location}
+                    return {'status': 1, "loc": location}
 
                 else:
                     self.failed += 1
@@ -88,17 +89,18 @@ class Baidu():
         except Exception as e:
             print(e)
 
-    def get_many(self,**kwargs):
+    def get_many(self, **kwargs):
         """
         批量获取坐标
         """
         pass
 
 
-class Crs_gen(QThread):
+class CrsGen(QThread):
     signal = pyqtSignal(list)
-    def __init__(self, reader,col_select, baidu:Baidu):
-        super(Crs_gen, self).__init__()
+
+    def __init__(self, reader, col_select, baidu: Baidu):
+        super(CrsGen, self).__init__()
         self.reader = reader
         self.col_select = col_select
         self.baidu = baidu
@@ -118,4 +120,3 @@ if __name__ == '__main__':
     b = Baidu()
     res = b.get_one("北京市")
     print(res)
-

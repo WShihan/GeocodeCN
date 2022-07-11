@@ -24,11 +24,11 @@ import csv
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry, QgsPointXY, QgsProject,Qgis
+from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry, QgsPointXY, QgsProject, Qgis
 from qgis.PyQt.QtWidgets import QFileDialog, QAction, QMessageBox
 import pandas as pd
-from .gcs import Baidu, Crs_gen
-from .utils import  CrsTypeEnum
+from .gcs import Baidu, CrsGen
+from .utils import CrsTypeEnum
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
@@ -48,7 +48,9 @@ class GeocodeCN:
         :type iface: QgsInterface
         """
         # Save reference to the QGIS interface
+        self.th = None
         self.iface = iface
+        self.dlg = GeocodeCNDialog()
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
@@ -65,14 +67,20 @@ class GeocodeCN:
 
         # Declare instance attributes
         self.actions = []
+        self.settings = QSettings()
         self.menu = self.tr(u'&GeocodeCN')
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
         self.locs = []
+        self.fields = []
         self.file_selected = False
         self.crsMap = {"百度坐标系": CrsTypeEnum.bd, "WGS84": CrsTypeEnum.bd2wgs, "国测局坐标系": CrsTypeEnum.bd2gcj}
+        self.appKeys = []
+        self.curCrs = None
+        self.curAk = None
+        self.init_config()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -100,45 +108,6 @@ class GeocodeCN:
             status_tip=None,
             whats_this=None,
             parent=None):
-        """Add a toolbar icon to the toolbar.
-
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
-        """
-
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -165,19 +134,16 @@ class GeocodeCN:
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
-
         icon_path = ':/plugins/GeocodeCN/icon.png'
         self.add_action(
             icon_path,
             text=self.tr(u''),
             callback=self.run,
             parent=self.iface.mainWindow())
-
         # will be set False in run()
         self.first_start = True
-        if self.first_start == True:
+        if self.first_start:
             self.first_start = False
-            self.dlg = GeocodeCNDialog()
             # 绑定信号
             self.dlg.btn_file.clicked.connect(self.select_csv)
             self.dlg.btn_start.clicked.connect(self.run)
@@ -185,6 +151,29 @@ class GeocodeCN:
             self.dlg.btn_add.clicked.connect(self.add_lyr)
             self.dlg.btn_clear.clicked.connect(self.clear)
             self.dlg.btnSingle.clicked.connect(self.single)
+            self.dlg.btn_addAk.clicked.connect(self.add_ak)
+            self.dlg.btn_apply.clicked.connect(self.config_apply)
+            self.dlg.btn_removeAk.clicked.connect(self.remove_ak)
+            self.dlg.showEvent = self.window_show_eventHandler
+
+    def init_config(self):
+        try:
+            self.appKeys = [] if self.settings.value('appKeys') is None else self.settings.value('appKeys')
+            self.curCrs = self.settings.value('curCrs')
+            self.curAk = self.settings.value('curAk')
+            if self.curCrs is not None:
+                for i in range(self.dlg.cb_crs.count()):
+                    if self.dlg.cb_crs.itemText(i) == self.curCrs:
+                        self.dlg.cb_crs.setCurrentIndex(i)
+                        print(self.dlg.cb_crs.itemText(i))
+                        break
+            if len(self.appKeys) > 0:
+                self.dlg.cb_ak_mgr.addItems(self.appKeys)
+                self.dlg.cb_ak.addItems(self.appKeys)
+                if self.curAk is not None and self.curAk != "":
+                    self.dlg.cb_ak.setCurrentIndex(self.appKeys.index(self.curAk))
+        except Exception as e:
+            self.setTip("初始化参数失败!", False)
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -194,21 +183,46 @@ class GeocodeCN:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def add_ak(self):
+        ak = self.dlg.le_addAk.text()
+        if ak != "":
+            self.appKeys.append(ak)
+            self.update_ak(self.appKeys)
+        self.dlg.le_addAk.setText("")
+        self.setTip(self.tr("成功添加appKey！"), Qgis.Success)
+
+    def remove_ak(self):
+        whichAk = self.dlg.cb_ak_mgr.currentText()
+        indexAk = self.appKeys.index(whichAk)
+        self.appKeys.pop(indexAk)
+        self.update_ak(self.appKeys)
+        self.setTip(self.tr("成功移除appKey！"), Qgis.Success)
+
+    def update_ak(self, aks):
+        self.settings.setValue('appKeys', aks)
+        self.dlg.cb_ak.clear()
+        self.dlg.cb_ak_mgr.clear()
+        self.init_config()
+
+    def config_apply(self):
+        self.settings.setValue('curCrs', self.dlg.cb_crs.currentText())
+        self.settings.setValue('curAk', self.dlg.cb_ak.currentText())
+        self.setTip(self.tr("配置应用成功！"), Qgis.Success)
+
+    def window_show_eventHandler(self, evt):
+        pass
+        # self.init_config()
+
     def run(self):
         """Run method that performs all the real work"""
-        # Create the dialog with elements (after translation) and keep reference
-        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        # show the dialog
         self.dlg.show()
-        # Run the dialog event loop
         result = self.dlg.exec_()
-        # See if OK was pressed
         if result:
             try:
                 if self.file_selected and len(self.locs) == 0:
-                    col_sele = self.dlg.cb.currentText()
+                    col_sel = self.dlg.cb.currentText()
                     crs = self.crsMap[self.dlg.cb_crs.currentText()]
-                    self.th = Crs_gen(self.address_list, col_sele, Baidu(transform=crs))
+                    self.th = CrsGen(self.address_list, col_sel, Baidu(ak=self.curAk, transform=crs))
                     self.th.signal.connect(self.collect_and_print)
                     self.th.finished.connect(lambda: self.dlg.pb.setValue(0))
                     self.th.start()
@@ -216,13 +230,15 @@ class GeocodeCN:
                     raise FileNotFoundError("请选择匹配文件或清除当前数据！")
             except Exception as e:
                 QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Ok)
+
     def select_csv(self):
         """
         选择文件
         """
         self.clear()
         try:
-            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"E:\Desktop\GisFile\sheet_text_asset","*.csv")
+            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"E:\Desktop\GisFile\sheet_text_asset",
+                                                             "*.csv")
             # 是否选择文件
             if file_name:
                 self.file_selected = True
@@ -242,18 +258,21 @@ class GeocodeCN:
         单一匹配地址
         """
         try:
+            self.clear()
             crs = self.crsMap[self.dlg.cb_crs.currentText()]
-            baidu = Baidu(transform=crs)
+            baidu = Baidu(ak=self.curAk, transform=crs)
             address = self.dlg.leAddress.text()
+            self.fields = ['地址']
             res = baidu.get_one(address)
             if res['status'] == 1:
-                pass
-                self.dlg.leLocation.setText( str(res['loc'][0]) + "," + str(res['loc'][1]))
+                loc = res['loc']
+                self.locs.clear()
+                self.locs.append([address] + loc)
+                self.dlg.tb_loc.append("地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(address, loc[0], loc[0], ""))
             else:
                 raise Exception("无地址数据！")
         except Exception as e:
             QMessageBox.information(self.dlg, '状态', str(e), QMessageBox.Ok)
-
 
     def collect_and_print(self, location):
         """
@@ -267,8 +286,6 @@ class GeocodeCN:
             attr = location[1]
             self.locs.append(attr + loc)
             self.dlg.tb_loc.append("地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(address, loc[0], loc[1], ""))
-        else:
-            pass
 
     def export(self):
         """
@@ -284,7 +301,7 @@ class GeocodeCN:
                     for r in self.locs:
                         writer.writerow(r)
                     # 提醒并修改窗口标题
-                    self.iface.messageBar().pushMessage(self.tr("成功导出csv！"), Qgis.Success)
+                    self.setTip(self.tr("成功导出为csv！"), Qgis.Success)
                     # QMessageBox.information(self.dlg, '状态', '保存成功！', QMessageBox.Yes)
                     self.dlg.setWindowTitle("GeocodeCN-已保存")
                 else:
@@ -306,6 +323,7 @@ class GeocodeCN:
                 # 添加属性字段
                 pr = lyr.dataProvider()
                 attr = [QgsField(i, QVariant.String) for i in self.fields + ['lon', 'lat']]
+
                 pr.addAttributes(attr)
                 lyr.updateFields()
                 for r in self.locs:
@@ -321,11 +339,18 @@ class GeocodeCN:
                 lyr.updateExtents()
                 # 添加至地图
                 QgsProject.instance().addMapLayer(lyr)
-                self.iface.messageBar().pushMessage(self.tr("成功添加图层！"), Qgis.Success)
+                self.setTip(self.tr("成功添加图层！"), Qgis.Success)
             else:
                 raise ValueError("无坐标数据！")
         except Exception as e:
             QMessageBox.critical(self.dlg, '状态', str(e), QMessageBox.Yes)
+
+    def setTip(self, tip: str, isSuccess: bool):
+        if isSuccess:
+            responseType = Qgis.Success
+        else:
+            responseType = Qgis.Warning
+        self.iface.messageBar().pushMessage(self.tr(tip), responseType)
 
     def clear(self):
         """
@@ -336,5 +361,5 @@ class GeocodeCN:
         self.file_selected = False
         self.dlg.setWindowTitle("GeocodeCN")
         self.locs.clear()
+        self.fields.clear()
         self.dlg.cb.clear()
-        self.locs.clear()

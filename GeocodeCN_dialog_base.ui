@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
-    <height>694</height>
+    <width>593</width>
+    <height>763</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,332 +16,337 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="font">
+      <font>
+       <family>黑体</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="currentIndex">
       <number>1</number>
      </property>
      <widget class="QWidget" name="table_batch">
       <attribute name="title">
-       <string>批量</string>
+       <string>工作区</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_7">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLineEdit" name="le_file">
-             <property name="minimumSize">
-              <size>
-               <width>200</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="baseSize">
-              <size>
-               <width>400</width>
-               <height>40</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_file">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>微软雅黑</family>
-               <pointsize>8</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>选择csv文件</string>
-             </property>
-             <property name="text">
-              <string>选择文件</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="minimumSize">
-              <size>
-               <width>30</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>黑体</family>
-               <pointsize>8</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>用作地理编码的列</string>
-             </property>
-             <property name="text">
-              <string>地址列</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cb">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>110</width>
-               <height>40</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>28</width>
-               <height>18</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_crs">
-             <property name="minimumSize">
-              <size>
-               <width>30</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>黑体</family>
-               <pointsize>8</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>用作地理编码的列</string>
-             </property>
-             <property name="text">
-              <string>坐标系</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cb_crs">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>110</width>
-               <height>40</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>WGS84</string>
+        <widget class="QGroupBox" name="gbBatch">
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
+         <property name="title">
+          <string>批量</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLineEdit" name="le_file">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>30</height>
+               </size>
               </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>百度坐标系</string>
+              <property name="baseSize">
+               <size>
+                <width>400</width>
+                <height>60</height>
+               </size>
               </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>国测局坐标系</string>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_file">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
               </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>78</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_start">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>黑体</family>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>开始编码</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">color:red;</string>
-             </property>
-             <property name="text">
-              <string>开始</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>60</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>微软雅黑</family>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>选择csv文件</string>
+              </property>
+              <property name="text">
+               <string>……</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>黑体</family>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>用作地理编码的列</string>
+              </property>
+              <property name="text">
+               <string>地址列</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cb">
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>110</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_start">
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>黑体</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>开始编码</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color:red;</string>
+              </property>
+              <property name="text">
+               <string>》》</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
-        <widget class="QTextBrowser" name="tb_loc"/>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
+         <property name="title">
+          <string>单个</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLineEdit" name="leAddress">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>800</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="placeholderText">
+               <string>在此输入地址名称，尽量详细</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnSingle">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>黑体</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>获取该地址坐标</string>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color:red;</string>
+              </property>
+              <property name="text">
+               <string>》》</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QPushButton" name="btn_add">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>黑体</family>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>生成图层</string>
-             </property>
-             <property name="text">
-              <string>添加到地图</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_export">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>黑体</family>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>导出为csv文件</string>
-             </property>
-             <property name="text">
-              <string>导出为</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_clear">
-             <property name="minimumSize">
-              <size>
-               <width>60</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>黑体</family>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>清除当前编码数据</string>
-             </property>
-             <property name="text">
-              <string>清除</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QProgressBar" name="pb">
-           <property name="toolTip">
-            <string>编码进度</string>
-           </property>
-           <property name="value">
-            <number>0</number>
+          <widget class="QTextBrowser" name="tb_loc">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QPushButton" name="btn_add">
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>黑体</family>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>生成图层</string>
+               </property>
+               <property name="text">
+                <string>添加到地图</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_export">
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>黑体</family>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>导出为csv文件</string>
+               </property>
+               <property name="text">
+                <string>导出为</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_clear">
+               <property name="minimumSize">
+                <size>
+                 <width>60</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>60</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>黑体</family>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>清除当前编码数据</string>
+               </property>
+               <property name="text">
+                <string>清除</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="pb">
+             <property name="toolTip">
+              <string>编码进度</string>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -349,70 +354,239 @@
      </widget>
      <widget class="QWidget" name="table_one">
       <attribute name="title">
-       <string>单个</string>
+       <string>配置区</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QLineEdit" name="leAddress">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>800</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="placeholderText">
-          <string>在此输入地址名称，尽量详细</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnSingle">
-         <property name="font">
-          <font>
-           <family>黑体</family>
-           <pointsize>18</pointsize>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>获取该地址坐标</string>
-         </property>
+        <widget class="QGroupBox" name="groupBox_2">
          <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color:red;</string>
-         </property>
-         <property name="text">
-          <string>↓</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="leLocation">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>800</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="readOnly">
           <bool>true</bool>
          </property>
-         <property name="placeholderText">
-          <string>坐标结果</string>
+         <property name="title">
+          <string>当前</string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QLabel" name="label_crs_config">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>黑体</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>用作地理编码的列</string>
+              </property>
+              <property name="text">
+               <string>坐标系：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cb_crs">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>400</width>
+                <height>30</height>
+               </size>
+              </property>
+              <item>
+               <property name="text">
+                <string>WGS84</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>百度坐标系</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>国测局坐标系</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QLabel" name="label_ak_config">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>黑体</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>用作地理编码的列</string>
+              </property>
+              <property name="text">
+               <string>密钥：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cb_ak">
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>400</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_apply">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>应用</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gb_akMsg">
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
+         <property name="title">
+          <string>添加密钥</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QLineEdit" name="le_addAk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>160</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>600</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_addAk">
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>添加</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gb_akMsg_2">
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
+         <property name="title">
+          <string>删除密钥</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="QComboBox" name="cb_ak_mgr">
+              <property name="minimumSize">
+               <size>
+                <width>160</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>600</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_removeAk">
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>移除</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

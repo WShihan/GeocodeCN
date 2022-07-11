@@ -6,7 +6,7 @@
 name=GeocodeCN
 qgisMinimumVersion=3.0
 description=地址/address --> 坐标/coordinates
-version=0.2
+version=0.2.1
 author=WangShihan
 email=3443327820@qq.com
 
