@@ -12,6 +12,12 @@
 > 2. 坐标转换，具备：百度坐标-->WGS84，百度坐标-->GCJ2000
 > 3. 直接生成Qgis临时点图层或导出为csv文件
 
+插件包含两个代码库，一个是github、另一个gitee
+
+> github:https://github.com/WShihan/GeocodeCN
+>
+> gitee:[GeocodeCN: https://gitee.com/ShihanW/geocode-cn
+
 ***
 
 ## 使用步骤：
@@ -44,29 +50,39 @@
 
 
 
-### 2.2 使用插件
+### 2.2 插件配置
 
-> 2.2.1选中csv文件后，指定表格中哪一列作为地址进行匹配。
+> 2.2.1首次使用需要配置坐标系和密钥，密钥需要前往百度开放平台进行注册，这里免费提供一个试用：9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm ，请求额度为：6000。![image-20220712195123022](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220712195123022.png)
 >
-> ![操作](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/%E6%93%8D%E4%BD%9C.gif)
+> 配置完成，重启qgis。
+>
+> 
+
+> 2.2.2选中csv文件后，指定表格中哪一列作为地址进行匹配。
+>
+> ![batch](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/batch.gif)
 >
 > 
 >
-> 2.2.2 匹配成功后可以生成点图层或者另存为csv文件。
+> 2.2.3 匹配成功后可以生成点图层或者另存为csv文件。
 >
-> ![保存和添加图层](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/%E4%BF%9D%E5%AD%98%E5%92%8C%E6%B7%BB%E5%8A%A0%E5%9B%BE%E5%B1%82.gif)
+> ![export](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/export.gif)
+>
+> ![saveas](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/saveas.gif)
 >
 > 
 >
-> 2.2.3 不同坐标系结果对比
+> 2.2.4 不同坐标系结果对比
 >
 > ![image-20220621025412703](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220621025412703.png)
 >
-> 2.2.4 单各地址匹配
+> 
+>
+> 2.2.5 单各地址匹配
 >
 > 输入地址，点击箭头即可匹配地址，坐标系为【批量匹配】模式下选择的坐标系。
 >
-> <img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220621030318805.png" alt="image-20220621030318805" style="zoom:50%;" />
+> ![image-20220712200127760](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220712200127760.png)
 
 
 
