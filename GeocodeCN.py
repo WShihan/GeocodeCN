@@ -268,7 +268,7 @@ class GeocodeCN:
                 loc = res['loc']
                 self.locs.clear()
                 self.locs.append([address] + loc)
-                self.dlg.tb_loc.append("地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(address, loc[0], loc[0], ""))
+                self.dlg.tb_loc.append("地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(address, loc[0], loc[1], ""))
             else:
                 raise Exception("无地址数据！")
         except Exception as e:
