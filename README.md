@@ -1,6 +1,6 @@
 ## 关于
 
-<img align=center src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" style="zoom:30%">
+<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" alt="fd" style="width:80px;margin: 0px auto" />
 
 <div align=center >GeocodeCN</div>
 
