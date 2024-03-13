@@ -1,4 +1,6 @@
-## 关于
+## GeocodeCN
+
+![GitHub Repo stars](https://img.shields.io/github/stars/WShihan/GeocodeCN?style=plastic)![GitHub repo size](https://img.shields.io/github/repo-size/WShihan/GeocodeCN?style=plastic)![GitHub last commit](https://img.shields.io/github/last-commit/WShihan/GeocodeCN?style=plastic)![GitHub](https://img.shields.io/github/license/WShihan/GeocodeCN?style=plastic)
 
 <img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" alt="fd" style="width:80px;margin: 0px auto" />
 
@@ -16,11 +18,11 @@
 
 > github:https://github.com/WShihan/GeocodeCN
 >
-> gitee:[GeocodeCN: https://gitee.com/ShihanW/geocode-cn
+> gitee:https://gitee.com/ShihanW/geocode-cn
 
 ***
 
-## 使用步骤：
+## 2使用步骤：
 
 ### 2.1 安装插件
 
