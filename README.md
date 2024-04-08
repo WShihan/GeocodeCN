@@ -1,18 +1,24 @@
 ## GeocodeCN
 
-![GitHub Repo stars](https://img.shields.io/github/stars/WShihan/GeocodeCN?style=plastic)![GitHub repo size](https://img.shields.io/github/repo-size/WShihan/GeocodeCN?style=plastic)![GitHub last commit](https://img.shields.io/github/last-commit/WShihan/GeocodeCN?style=plastic)![GitHub](https://img.shields.io/github/license/WShihan/GeocodeCN?style=plastic)
+![GitHub Repo stars](https://img.shields.io/github/stars/WShihan/GeocodeCN?style=plastic) ![GitHub repo size](https://img.shields.io/github/repo-size/WShihan/GeocodeCN?style=plastic) ![GitHub last commit](https://img.shields.io/github/last-commit/WShihan/GeocodeCN?style=plastic) ![GitHub](https://img.shields.io/github/license/WShihan/GeocodeCN?style=plastic)
 
-<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" alt="fd" style="width:80px;margin: 0px auto" />
+## 1. 介绍
 
-<div align=center >GeocodeCN</div>
+<p align="center">
+<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" alt="fd" style="width:60px;margin: 0px auto" /></p>
 
 
 
-一个Qgis插件，用于地理编码，地址——> 坐标，其特点如下
+
+
+GeocodeCN是一个Qgis插件，用于地理编码，地址——> 坐标，其特点如下
 
 > 1. 批量将地址转为坐标
 > 2. 坐标转换，具备：百度坐标-->WGS84，百度坐标-->GCJ2000
-> 3. 直接生成Qgis临时点图层或导出为csv文件
+> 3. 直接生成Qgis临时点图层
+> 4. 将结果导出为csv文件
+
+
 
 插件包含两个代码库，一个是github、另一个gitee
 
@@ -20,9 +26,11 @@
 >
 > gitee:https://gitee.com/ShihanW/geocode-cn
 
-***
 
-## 2使用步骤：
+
+
+
+## 2. 使用步骤：
 
 ### 2.1 安装插件
 
@@ -54,7 +62,9 @@
 
 ### 2.2 插件配置
 
-> 2.2.1首次使用需要配置坐标系和密钥，密钥需要前往百度开放平台进行注册，这里免费提供一个试用：9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm ，请求额度为：6000。![image-20220712195123022](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220712195123022.png)
+> 2.2.1首次使用需要配置坐标系和密钥，密钥需要前往百度开放平台进行注册，这里免费提供一个试用：9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm ，请求额度为：6000。
+>
+> ![image-20220712195123022](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220712195123022.png)
 >
 > 配置完成，重启qgis。
 >
@@ -90,7 +100,7 @@
 
 ***
 
-## 说明
+## 3. 说明
 
 > * 依赖百度地图开放接口，具体坐标精度请参考其官网。
 > * 地址匹配尽量详细，如：xxx省/市/区xxx街道xxx地，若某地址未匹配成功，插件会自动省略。
