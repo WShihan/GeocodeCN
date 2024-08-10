@@ -5,12 +5,12 @@
 [general]
 name=GeocodeCN
 qgisMinimumVersion=3.0
-description=地址/address --> 坐标/coordinates
-version=0.2.1
+description=基于百度地图开放平台，将地址转为经纬度坐标。
+version=0.2.2
 author=WangShihan
 email=3443327820@qq.com
 
-about=获取地址在百度地图中的坐标
+about=基于百度地图开放平台，将地址转为经纬度坐标。
 
 tracker=https://github.com/WShihan/GeocodeCN
 repository=https://github.com/WShihan/GeocodeCN
@@ -29,7 +29,7 @@ homepage=https://github.com/WShihan/GeocodeCN
 category=Plugins
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
@@ -40,7 +40,7 @@ deprecated=False
 # plugin_dependencies=
 
 Category of the plugin: Raster, Vector, Database or Web
-# category=
+category=Vector
 
 # If the plugin can run on QGIS Server.
 server=False
