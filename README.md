@@ -5,10 +5,7 @@
 ## 1. 介绍
 
 <p align="center">
-<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/icon-16420027061082.png" alt="fd" style="width:60px;margin: 0px auto" /></p>
-
-
-
+<img src="./icon.png" alt="fd" style="width:60px;margin: 0px auto" /></p>
 
 
 GeocodeCN是一个Qgis插件，用于地理编码，地址——> 坐标，其特点如下
@@ -20,81 +17,69 @@ GeocodeCN是一个Qgis插件，用于地理编码，地址——> 坐标，其�
 
 
 
-插件包含两个代码库，一个是github、另一个gitee
-
-> github:https://github.com/WShihan/GeocodeCN
->
-> gitee:https://gitee.com/ShihanW/geocode-cn
-
-
-
-
-
 ## 2. 使用步骤：
 
 ### 2.1 安装插件
 
-将仓库下载或克隆到本地
+2.1.1 下载zip格式仓库文件压缩包。
 
-> * 使用git 
->
->   ```
->   git clone https://gitee.com/ShihanW/geocode-cn
->   ```
->
-> * 下载zip文件
->
->   ![image-20220110124451366](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/VWP2zMaL1FDpTxe.png)
+![image-20220110124451366](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/VWP2zMaL1FDpTxe.png)
 
 
 
-解压后复制到QGis能识别的插件目录，步骤如下：
+2.1.2 在QGSI里打开插件管理页面，选择`Insall from ZIP`，选择上一步下载的zip文件
 
-> 打开 Qgis --> Settings --> User Profiles --> Open Active Profile Folder
->
-> ![image-20220110122357148](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/2V9AmtUTMBZEyxR.png)
->
-> 之后进入 Python --> Plugins 目录下，将仓库移动到此处，接下来在Plugins，勾选它。
->
-> ![image-20220112234611216](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/image-20220112234611216.png)
+![image-20240811023822744](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20240811023822744.png)
+
+点击`installed`查看是否安装成功
+
+![image-20240811024354440](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20240811024354440.png)
 
 
 
 ### 2.2 插件配置
 
-> 2.2.1首次使用需要配置坐标系和密钥，密钥需要前往百度开放平台进行注册，这里免费提供一个试用：9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm ，请求额度为：6000。
->
-> ![image-20220712195123022](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220712195123022.png)
->
-> 配置完成，重启qgis。
->
-> 
+ 首次使用需要配置坐标系和密钥，密钥需要前往百度开放平台进行注册，这里免费提供一个试用：`9IRhgisjtSA8LBnX4RwSdyHamH2jxjxm` ，请求额度为每日6000。
 
-> 2.2.2选中csv文件后，指定表格中哪一列作为地址进行匹配。
->
-> ![batch](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/batch.gif)
->
-> 
->
-> 2.2.3 匹配成功后可以生成点图层或者另存为csv文件。
->
-> ![export](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/export.gif)
->
-> ![saveas](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/saveas.gif)
->
-> 
->
-> 2.2.4 不同坐标系结果对比
->
-> ![image-20220621025412703](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220621025412703.png)
->
-> 
->
-> 2.2.5 单各地址匹配
->
-> 输入地址，点击箭头即可匹配地址，坐标系为【批量匹配】模式下选择的坐标系。
->
-> ![image-20220712200127760](https://md-1301600412.cos.ap-nanjing.myqcloud.com/gitUse/image-20220712200127760.png)
+ ![image-20240811024516533](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20240811024516533.png)
+
+ 配置完成，可能需要重启qgis。
+
+
+
+### 2.3 使用
+
+1.批量匹配
+
+选中csv文件后，指定表格中哪一列作为地址进行匹配。
+
+可在配置区，设置坐标系。
+
+![image-20240811025611843](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20240811025611843.png)
+
+
+
+2.单次匹配
+
+![image-20240811030328494](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20240811030328494.png)
+
+
+
+可将匹配结果导入地图查看或导出为包含坐标值的csv文件。
+
+
+
+不同坐标系结果对比
+
+![](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-2022062102541270_clip.png)
+
+
+
+
+
+
+
+
 
 
 
