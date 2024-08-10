@@ -22,12 +22,15 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="table_batch">
       <attribute name="title">
-       <string>工作区</string>
+       <string>转换</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -77,11 +80,14 @@
                 <pointsize>8</pointsize>
                </font>
               </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="toolTip">
                <string>选择csv文件</string>
               </property>
               <property name="text">
-               <string>……</string>
+               <string>文件</string>
               </property>
              </widget>
             </item>
@@ -149,6 +155,9 @@
                 <pointsize>12</pointsize>
                </font>
               </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="toolTip">
                <string>开始编码</string>
               </property>
@@ -156,7 +165,7 @@
                <string notr="true">color:red;</string>
               </property>
               <property name="text">
-               <string>》》</string>
+               <string>开始</string>
               </property>
              </widget>
             </item>
@@ -215,6 +224,9 @@
                 <pointsize>10</pointsize>
                </font>
               </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="toolTip">
                <string>获取该地址坐标</string>
               </property>
@@ -225,7 +237,7 @@
                <string notr="true">color:red;</string>
               </property>
               <property name="text">
-               <string>》》</string>
+               <string>开始</string>
               </property>
              </widget>
             </item>
@@ -270,6 +282,9 @@
                  <pointsize>12</pointsize>
                 </font>
                </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
                <property name="toolTip">
                 <string>生成图层</string>
                </property>
@@ -297,6 +312,9 @@
                  <family>黑体</family>
                  <pointsize>12</pointsize>
                 </font>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
                 <string>导出为csv文件</string>
@@ -326,6 +344,9 @@
                  <pointsize>12</pointsize>
                 </font>
                </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
                <property name="toolTip">
                 <string>清除当前编码数据</string>
                </property>
@@ -354,7 +375,7 @@
      </widget>
      <widget class="QWidget" name="table_one">
       <attribute name="title">
-       <string>配置区</string>
+       <string>配置</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
