@@ -6,7 +6,7 @@
 name=GeocodeCN
 qgisMinimumVersion=3.0
 description=基于百度地图开放平台，将地址转为经纬度坐标。
-version=0.2.2
+version=0.2.3
 author=WangShihan
 email=3443327820@qq.com
 

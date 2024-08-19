@@ -2,13 +2,22 @@
 <ui version="4.0">
  <class>GeocodeCNDialogBase</class>
  <widget class="QDialog" name="GeocodeCNDialogBase">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>593</width>
-    <height>763</height>
+    <width>550</width>
+    <height>614</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>550</width>
+    <height>550</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>GeocodeCN</string>
@@ -41,9 +50,9 @@
          <property name="title">
           <string>批量</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QLineEdit" name="le_file">
               <property name="minimumSize">
@@ -58,13 +67,22 @@
                 <height>60</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <family>.AppleSystemUIFont</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="btn_file">
               <property name="minimumSize">
                <size>
-                <width>40</width>
+                <width>60</width>
                 <height>20</height>
                </size>
               </property>
@@ -76,8 +94,8 @@
               </property>
               <property name="font">
                <font>
-                <family>微软雅黑</family>
-                <pointsize>8</pointsize>
+                <family>Heiti SC</family>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="cursor">
@@ -91,24 +109,28 @@
               </property>
              </widget>
             </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
              <widget class="QLabel" name="label">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>30</width>
                 <height>20</height>
                </size>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>60</width>
-                <height>40</height>
-               </size>
-              </property>
               <property name="font">
                <font>
-                <family>黑体</family>
-                <pointsize>8</pointsize>
+                <family>.AppleSystemUIFont</family>
+                <pointsize>10</pointsize>
                </font>
               </property>
               <property name="toolTip">
@@ -117,13 +139,69 @@
               <property name="text">
                <string>地址列</string>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
              </widget>
             </item>
             <item>
              <widget class="QComboBox" name="cb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
-                <width>80</width>
+                <width>180</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>.AppleSystemUIFont</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lbl_encoding">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>.AppleSystemUIFont</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>用作地理编码的列</string>
+              </property>
+              <property name="text">
+               <string>编码</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cb_encoding">
+              <property name="minimumSize">
+               <size>
+                <width>180</width>
                 <height>30</height>
                </size>
               </property>
@@ -133,43 +211,52 @@
                 <height>30</height>
                </size>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btn_start">
-              <property name="minimumSize">
-               <size>
-                <width>80</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>40</height>
-               </size>
-              </property>
               <property name="font">
                <font>
-                <family>黑体</family>
+                <family>.AppleSystemUIFont</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="toolTip">
-               <string>开始编码</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">color:red;</string>
-              </property>
-              <property name="text">
-               <string>开始</string>
+              <property name="currentText">
+               <string/>
               </property>
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_start">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>黑体</family>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>开始编码</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>开始</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -188,16 +275,28 @@
             <item>
              <widget class="QLineEdit" name="leAddress">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>800</width>
-                <height>30</height>
+                <height>40</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>.AppleSystemUIFont</family>
+                <pointsize>12</pointsize>
+               </font>
               </property>
               <property name="placeholderText">
                <string>在此输入地址名称，尽量详细</string>
@@ -215,7 +314,7 @@
               <property name="minimumSize">
                <size>
                 <width>80</width>
-                <height>20</height>
+                <height>30</height>
                </size>
               </property>
               <property name="font">
@@ -234,7 +333,7 @@
                <bool>false</bool>
               </property>
               <property name="styleSheet">
-               <string notr="true">color:red;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>开始</string>

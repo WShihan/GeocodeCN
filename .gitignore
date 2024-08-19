@@ -1,3 +1,7 @@
 .idea/
 *out.csv
 test.csv
+__pycache__/
+.vscode/
+*.env
+

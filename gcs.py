@@ -52,7 +52,7 @@ class Baidu:
     def transform(self, value):
         self.trans = value
 
-    def get_one(self, address):
+    def get_one(self, address) -> tuple:
         """
         获取单一坐标
         :arg
@@ -60,34 +60,33 @@ class Baidu:
         attr 其他字段信息
         """
         self.__params['address'] = address
-        try:
-            res = self.session.get(url=self.url,
-                                   params=self.__params,
-                                   headers={'user-agent': self.ua},
-                                   timeout=10
-                                   )
-            if res.status_code == 200:
-                res.encoding = res.apparent_encoding
-                if 'result' in json.loads(res.text):
-                    res_json = json.loads(res.text)['result']
-                    loc_raw = res_json['location']
-                    comprehension = res_json['comprehension']
-                    if self.trans == CrsTypeEnum.bd2wgs:
-                        loc = bd09_to_wgs84(loc_raw['lng'], loc_raw['lat'])
-                    elif self.trans == CrsTypeEnum.bd2gcj:
-                        loc = bd09_to_gcj02(loc_raw['lng'], loc_raw['lat'])
-                    else:
-                        loc = [loc_raw['lng'], loc_raw['lat']]
-                    self.made += 1
-                    location = [loc[0], loc[1]]
-                    return {'status': 1, "loc": location}
-
+        res = self.session.get(url=self.url,
+                                params=self.__params,
+                                headers={'user-agent': self.ua},
+                                timeout=10
+                                )
+        if res.status_code == 200:
+            res.encoding = res.apparent_encoding
+            if 'result' in json.loads(res.text):
+                res_json = json.loads(res.text)['result']
+                loc_raw = res_json['location']
+                comprehension = res_json['comprehension']
+                if self.trans == CrsTypeEnum.bd2wgs:
+                    loc = bd09_to_wgs84(loc_raw['lng'], loc_raw['lat'])
+                elif self.trans == CrsTypeEnum.bd2gcj:
+                    loc = bd09_to_gcj02(loc_raw['lng'], loc_raw['lat'])
                 else:
-                    self.failed += 1
-                    location = ['NA', 'NA']
-                    return {'status': 0, "loc": location}
-        except Exception as e:
-            print(e)
+                    loc = [loc_raw['lng'], loc_raw['lat']]
+                self.made += 1
+                location = [loc[0], loc[1]]
+                return (1, location)
+
+            else:
+                self.failed += 1
+                location = ['NA', 'NA']
+                return (0, location)
+        else:
+            return tuple()
 
     def get_many(self, **kwargs):
         """
@@ -110,13 +109,14 @@ class CrsGen(QThread):
             address = r[self.col_select]
             attr = [r[i] for i in r.keys()]
             res = self.baidu.get_one(address)
-            if res['status'] == 1:
-                self.signal.emit([address, attr, res['loc']])
+            if len(res) > 0:
+                if res[0] == 1:
+                    self.signal.emit([address, attr, res[1]])
             else:
                 self.signal.emit([])
 
 
 if __name__ == '__main__':
-    b = Baidu()
+    b = Baidu(ak='')
     res = b.get_one("北京市")
     print(res)
