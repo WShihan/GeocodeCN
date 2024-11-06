@@ -404,11 +404,15 @@ class GeocodeCN:
         """
         清除窗口信息
         """
-        self.dlg.le_file.setText("")
-        self.dlg.tb_loc.setText("")
-        self.file_selected = False
-        self.dlg.setWindowTitle("GeocodeCN")
-        self.locs.clear()
-        self.fields.clear()
-        self.dlg.cb.clear()
-        self.dlg.pb.setValue(0)
+        try:
+            self.dlg.le_file.setText("")
+            self.dlg.tb_loc.setText("")
+            self.file_selected = False
+            self.dlg.setWindowTitle("GeocodeCN")
+            self.locs.clear()
+            self.fields.clear()
+            self.dlg.cb.clear()
+            self.dlg.pb.setValue(0)
+            self.setTip(self.tr("清除成功"), Qgis.Success)  # type: ignore
+        except Exception as e:
+            self.setTip(self.tr("清除成功"), Qgis.Failed)  # type: ignore
