@@ -200,7 +200,7 @@ class GeocodeCN:
         self.settings.setValue('HERE_KEY', self.dlg.le_key_here.text())
         self.settings.setValue('OSM_PROXY', self.dlg.le_proxy_osm.text())
         self.settings.setValue('ACTIVE_SERVICE', self.dlg.cb_service.currentText())
-        QMessageBox.information(self.dlg, '状态', '配置应用成功', QMessageBox.Ok)
+        self.setTip(self.tr("配置已保存"), Qgis.Success)  # type: ignore
 
         # 热更新配置
         self.read_config()
@@ -213,7 +213,7 @@ class GeocodeCN:
 
         service = self.config.active_service
         if service == '百度地图':
-            if self.config.here_key == '':
+            if self.config.baidu_key == '':
                 raise FileNotFoundError("请先在配置中填写百度地图的key！")
             crs = self.crsMap[self.dlg.cb_crs.currentText()]
             return Baidu(self.config.baidu_key, transform=crs)
