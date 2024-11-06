@@ -1,0 +1,1 @@
+pyuic5 -o GeocodeCN_dialog_base.py GeocodeCN_dialog_base.ui

@@ -24,17 +24,27 @@ import csv
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry, QgsPointXY, QgsProject, Qgis
+from qgis.core import (
+    QgsVectorLayer,
+    QgsField,
+    QgsFeature,
+    QgsGeometry,
+    QgsPointXY,
+    QgsProject,
+    Qgis,
+)
 from qgis.PyQt.QtWidgets import QFileDialog, QAction, QMessageBox
-import pandas as pd
-from .gcs import Baidu, CrsGen
+from .gcs import Baidu, CrsGen, Nominatim, Here, Mapbox, Geocoder
 from .utils import CrsTypeEnum
+from .config import Config
+import encodings
+
 # Initialize Qt resources from file resources.py
 from .resources import *
+
 # Import the code for the dialog
 from .GeocodeCN_dialog import GeocodeCNDialog
 import os
-import encodings
 
 
 class GeocodeCN:
@@ -57,9 +67,8 @@ class GeocodeCN:
         # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'GeocodeCN_{}.qm'.format(locale))
+            self.plugin_dir, 'i18n', 'GeocodeCN_{}.qm'.format(locale)
+        )
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -77,11 +86,16 @@ class GeocodeCN:
         self.locs = []
         self.fields = []
         self.file_selected = False
-        self.crsMap = {"百度坐标系": CrsTypeEnum.bd, "WGS84": CrsTypeEnum.bd2wgs, "国测局坐标系": CrsTypeEnum.bd2gcj}
+        self.crsMap = {
+            "百度坐标系": CrsTypeEnum.bd,
+            "WGS84": CrsTypeEnum.bd2wgs,
+            "国测局坐标系": CrsTypeEnum.bd2gcj,
+        }
         self.appKeys = []
         self.curCrs = None
         self.curAk = None
-        self.init_config()
+        self.config = Config()
+        self.read_config()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -99,16 +113,17 @@ class GeocodeCN:
         return QCoreApplication.translate('GeocodeCN', message)
 
     def add_action(
-            self,
-            icon_path,
-            text,
-            callback,
-            enabled_flag=True,
-            add_to_menu=True,
-            add_to_toolbar=True,
-            status_tip=None,
-            whats_this=None,
-            parent=None):
+        self,
+        icon_path,
+        text,
+        callback,
+        enabled_flag=True,
+        add_to_menu=True,
+        add_to_toolbar=True,
+        status_tip=None,
+        whats_this=None,
+        parent=None,
+    ):
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -125,9 +140,7 @@ class GeocodeCN:
             self.iface.addToolBarIcon(action)
 
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+            self.iface.addPluginToMenu(self.menu, action)
 
         self.actions.append(action)
 
@@ -140,7 +153,8 @@ class GeocodeCN:
             icon_path,
             text=self.tr(u''),
             callback=self.run,
-            parent=self.iface.mainWindow())
+            parent=self.iface.mainWindow(),
+        )
         # will be set False in run()
         self.first_start = True
         if self.first_start:
@@ -152,68 +166,70 @@ class GeocodeCN:
             self.dlg.btn_add.clicked.connect(self.add_lyr)
             self.dlg.btn_clear.clicked.connect(self.clear)
             self.dlg.btnSingle.clicked.connect(self.single)
-            self.dlg.btn_addAk.clicked.connect(self.add_ak)
             self.dlg.btn_apply.clicked.connect(self.config_apply)
-            self.dlg.btn_removeAk.clicked.connect(self.remove_ak)
-            self.dlg.showEvent = self.window_show_eventHandler # type: ignore
+            self.dlg.showEvent = self.window_show_eventHandler  # type: ignore
 
-    def init_config(self):
-        self.appKeys = [] if self.settings.value('appKeys') is None else self.settings.value('appKeys')
-        self.curCrs = self.settings.value('curCrs')
-        self.curAk = self.settings.value('curAk')
+    def read_config(self):
         self.address_list = []
+        self.config.baidu_crs = self.settings.value('BAIDU_CRS')
+        self.config.active_service = self.settings.value('ACTIVE_SERVICE')
+        self.config.baidu_key = self.settings.value('BAIDU_KEY')
+        self.config.here_key = self.settings.value('HERE_KEY')
+        self.config.mapbox_key = self.settings.value('MAPBOX_KEY')
+        self.config.osm_proxy = self.settings.value('OSM_PROXY')
+
         self.dlg.cb_encoding.addItems(sorted(encodings.aliases.aliases.keys()))
         self.dlg.cb_encoding.setCurrentText('utf8')
-
-        if self.curCrs is not None:
-            for i in range(self.dlg.cb_crs.count()):
-                if self.dlg.cb_crs.itemText(i) == self.curCrs:
-                    self.dlg.cb_crs.setCurrentIndex(i)
-                    print(self.dlg.cb_crs.itemText(i))
-                    break
-        if len(self.appKeys) > 0:
-            self.dlg.cb_ak_mgr.addItems(self.appKeys)
-            self.dlg.cb_ak.addItems(self.appKeys)
-            if self.curAk is not None and self.curAk != "":
-                self.dlg.cb_ak.setCurrentIndex(self.appKeys.index(self.curAk))
+        self.dlg.cb_service.setCurrentText(self.config.active_service)
+        self.dlg.cb_crs.setCurrentText(self.config.baidu_crs)
+        self.dlg.le_key_baidu.setText(self.config.baidu_key)
+        self.dlg.le_key_here.setText(self.config.here_key)
+        self.dlg.le_key_mapbox.setText(self.config.mapbox_key)
+        self.dlg.le_proxy_osm.setText(self.config.osm_proxy)
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&GeocodeCN'),
-                action)
+            self.iface.removePluginMenu(self.tr(u'&GeocodeCN'), action)
             self.iface.removeToolBarIcon(action)
 
-    def add_ak(self):
-        ak = self.dlg.le_addAk.text()
-        if ak != "":
-            self.appKeys.append(ak)
-            self.update_ak(self.appKeys)
-        self.dlg.le_addAk.setText("")
-        self.setTip(self.tr("成功添加appKey！"), Qgis.Success) # type: ignore
-
-    def remove_ak(self):
-        whichAk = self.dlg.cb_ak_mgr.currentText()
-        indexAk = self.appKeys.index(whichAk)
-        self.appKeys.pop(indexAk)
-        self.update_ak(self.appKeys)
-        self.setTip(self.tr("成功移除appKey！"), Qgis.Success) # type: ignore
-
-    def update_ak(self, aks):
-        self.settings.setValue('appKeys', aks)
-        self.dlg.cb_ak.clear()
-        self.dlg.cb_ak_mgr.clear()
-        self.init_config()
-
     def config_apply(self):
-        self.settings.setValue('curCrs', self.dlg.cb_crs.currentText())
-        self.settings.setValue('curAk', self.dlg.cb_ak.currentText())
-        self.setTip(self.tr("配置应用成功！"), Qgis.Success) # type: ignore
+        self.settings.setValue('BAIDU_CRS', self.dlg.cb_crs.currentText())
+        self.settings.setValue('BAIDU_KEY', self.dlg.le_key_baidu.text())
+        self.settings.setValue('MAPBOX_KEY', self.dlg.le_key_mapbox.text())
+        self.settings.setValue('HERE_KEY', self.dlg.le_key_here.text())
+        self.settings.setValue('OSM_PROXY', self.dlg.le_proxy_osm.text())
+        self.settings.setValue('ACTIVE_SERVICE', self.dlg.cb_service.currentText())
+        QMessageBox.information(self.dlg, '状态', '配置应用成功', QMessageBox.Ok)
+
+        # 热更新配置
+        self.read_config()
 
     def window_show_eventHandler(self, evt):
         pass
-        # self.init_config()
+        # self.read_config()
+
+    def detect_geocoder(self) -> Geocoder:
+
+        service = self.config.active_service
+        if service == '百度地图':
+            if self.config.here_key == '':
+                raise FileNotFoundError("请先在配置中填写百度地图的key！")
+            crs = self.crsMap[self.dlg.cb_crs.currentText()]
+            return Baidu(self.config.baidu_key, transform=crs)
+        elif service == 'Here':
+            if self.config.here_key == '':
+                raise FileNotFoundError("请先在配置中填写Here的key！")
+            return Here(self.config.here_key)
+        elif service == 'Mapbox':
+            if self.config.mapbox_key == '':
+                raise FileNotFoundError("请先在配置中填写Mapbox的key！")
+            return Mapbox(self.config.mapbox_key)
+        else:
+            if self.config.osm_proxy:
+                return Nominatim(proxy=self.config.osm_proxy)
+            else:
+                return Nominatim()
 
     def run(self):
         """Run method that performs all the real work"""
@@ -223,8 +239,8 @@ class GeocodeCN:
             try:
                 if self.file_selected and len(self.locs) == 0:
                     col_sel = self.dlg.cb.currentText()
-                    crs = self.crsMap[self.dlg.cb_crs.currentText()]
-                    self.th = CrsGen(self.address_list, col_sel, Baidu(ak=self.curAk, transform=crs))
+                    handler = self.detect_geocoder()
+                    self.th = CrsGen(self.address_list, col_sel, handler)
                     self.th.signal.connect(self.collect_and_print)
                     self.th.finished.connect(lambda: self.dlg.pb.setValue(0))
                     self.th.start()
@@ -239,15 +255,23 @@ class GeocodeCN:
         """
         self.clear()
         try:
-            file_name, _filter = QFileDialog.getOpenFileName(self.dlg, "选择文件", r"E:\Desktop\GisFile\sheet_text_asset",
-                                                             "*.csv")
+            file_name, _filter = QFileDialog.getOpenFileName(
+                self.dlg, "选择文件", r"E:\Desktop\GisFile\sheet_text_asset", "*.csv"
+            )
             # 是否选择文件
             if file_name:
                 self.file_selected = True
                 self.dlg.le_file.setText(file_name)
-                reader = csv.DictReader(open(self.dlg.le_file.text(), 'r', encoding=self.dlg.cb_encoding.currentText()))
+                reader = csv.DictReader(
+                    open(
+                        self.dlg.le_file.text(),
+                        'r',
+                        encoding=self.dlg.cb_encoding.currentText(),
+                    ),
+                    delimiter=self.dlg.cb_delimiter.currentText(),
+                )
                 self.fields.clear()
-                self.fields += reader.fieldnames # type: ignore
+                self.fields += reader.fieldnames  # type: ignore
                 self.address_list.clear()
                 self.address_list = list(reader)
                 self.dlg.cb.addItems(self.fields)
@@ -263,19 +287,26 @@ class GeocodeCN:
         """
         try:
             self.clear()
-            crs = self.crsMap[self.dlg.cb_crs.currentText()]
-            baidu = Baidu(ak=self.curAk, transform=crs)
+            self.dlg.pb.setMaximum(10)
+            self.dlg.pb.setValue(3)
+            handler = self.detect_geocoder()
             address = self.dlg.leAddress.text()
-            self.fields: list= ['地址']
-            res = baidu.get_one(address)
+            self.fields: list = ['地址']
+            res = handler.search(address)
             if len(res) > 0:
                 if res[0] == 1:
                     loc = res[1]
                     self.locs.clear()
                     self.locs.append([address] + loc)
-                    self.dlg.tb_loc.append("地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(address, loc[0], loc[1], ""))
+                    self.dlg.tb_loc.append(
+                        "地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(
+                            address, loc[0], loc[1], ""
+                        )
+                    )
+                self.dlg.pb.setValue(10)
 
             else:
+                self.dlg.pb.setValue(10)
                 raise Exception("无地址数据！")
         except Exception as e:
             QMessageBox.information(self.dlg, '状态', str(e), QMessageBox.Ok)
@@ -292,7 +323,11 @@ class GeocodeCN:
             address = location[0]
             attr = location[1]
             self.locs.append(attr + loc)
-            self.dlg.tb_loc.append("地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(address, loc[0], loc[1], ""))
+            self.dlg.tb_loc.append(
+                "地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(
+                    address, loc[0], loc[1], ""
+                )
+            )
 
     def export(self):
         """
@@ -301,14 +336,18 @@ class GeocodeCN:
         try:
             # 是否存在已编码数据
             if len(self.locs) != 0:
-                output_file, _filter = QFileDialog.getSaveFileName(self.dlg, "另存为csv", "", "*.csv")
+                output_file, _filter = QFileDialog.getSaveFileName(
+                    self.dlg, "另存为csv", "", "*.csv"
+                )
                 if output_file:
-                    writer = csv.writer(open(output_file, 'a', encoding="gbk", newline=""))
+                    writer = csv.writer(
+                        open(output_file, 'a', encoding="gbk", newline="")
+                    )
                     writer.writerow(self.fields + ['lon', 'lat'])
                     for r in self.locs:
                         writer.writerow(r)
                     # 提醒并修改窗口标题
-                    self.setTip(self.tr("成功导出为csv！"), Qgis.Success) # type: ignore
+                    self.setTip(self.tr("成功导出为csv！"), Qgis.Success)  # type: ignore
                     # QMessageBox.information(self.dlg, '状态', '保存成功！', QMessageBox.Yes)
                     self.dlg.setWindowTitle("GeocodeCN-已保存")
                 else:
@@ -329,7 +368,9 @@ class GeocodeCN:
                 lyr = QgsVectorLayer("Point", "geocode_temp_lyr", "memory")
                 # 添加属性字段
                 pr = lyr.dataProvider()
-                attr = [QgsField(i, QVariant.String) for i in self.fields + ['lon', 'lat']]
+                attr = [
+                    QgsField(i, QVariant.String) for i in self.fields + ['lon', 'lat']
+                ]
 
                 pr.addAttributes(attr)
                 lyr.updateFields()
@@ -346,7 +387,7 @@ class GeocodeCN:
                 lyr.updateExtents()
                 # 添加至地图
                 QgsProject.instance().addMapLayer(lyr)
-                self.setTip(self.tr("成功添加图层！"), Qgis.Success) # type: ignore
+                self.setTip(self.tr("成功添加图层！"), Qgis.Success)  # type: ignore
             else:
                 raise ValueError("无坐标数据！")
         except Exception as e:
@@ -370,3 +411,4 @@ class GeocodeCN:
         self.locs.clear()
         self.fields.clear()
         self.dlg.cb.clear()
+        self.dlg.pb.setValue(0)
