@@ -28,7 +28,10 @@ GeocodeCN是一个QGIS插件，用于地理编码，地址——> 坐标，其�
 
 2.1.1 下载zip格式仓库文件压缩包。
 
-![image-20220110124451366](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/VWP2zMaL1FDpTxe.png)
+<p align="center">
+<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/VWP2zMaL1FDpTxe.png" alt="image-20220110124451366" /></p>
+
+
 
 
 
@@ -46,7 +49,11 @@ GeocodeCN是一个QGIS插件，用于地理编码，地址——> 坐标，其�
 
  首次使用需要配置密钥然后选择使用哪一个`服务`（有些地图服务需要配置坐标系，比如百度地图），密钥需要前往地图服务平台获取。
 
+<p align="center">
 <img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20241106234932211.png" alt="image-20241106234932211" style="width:70%;" />
+</p>
+
+
 
  配置完成，可能需要重启qgis。
 
@@ -60,13 +67,23 @@ GeocodeCN是一个QGIS插件，用于地理编码，地址——> 坐标，其�
 
 可在配置区，设置坐标系。
 
+<p align="center">
 <img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20241106235141869.png" alt="image-20241106235141869" style="width:70%;" />
+</p>
+
+
+
+
 
 
 
 2.单次匹配
 
+
+
+<p align="center">
 <img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20241106235635927.png" alt="image-20241106235635927" style="width:70%;" />
+</p>
 
 
 
