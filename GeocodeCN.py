@@ -38,7 +38,7 @@ from qgis.core import (
 )
 from qgis.PyQt.QtWidgets import QFileDialog, QAction, QMessageBox
 from .gcs import Baidu, CrsGen, Nominatim, Here, Mapbox, Geocoder
-from .utils import CrsTypeEnum
+from .utils import CrsTypeEnum, detect_encoding
 from .config import Config
 
 # Initialize Qt resources from file resources.py
@@ -223,7 +223,12 @@ class GeocodeCN:
                 self.file_selected = True
                 self.dlg.le_file.setText(file_name)
                 csv_path = self.dlg.le_file.text()
-                self.encoding = self.dlg.cb_encoding.currentText()
+                encoding = self.detect_encoding(csv_path)
+                if encoding != '':
+                    self.dlg.cb_encoding.setCurrentText(encoding)
+                    self.encoding = encoding
+                else:
+                    self.encoding = self.dlg.cb_encoding.currentText()
                 csv_detect = self.csv_detect(csv_path, self.encoding)
                 if len(csv_detect) == 0:
                     raise Exception("解析CSV错误！")
@@ -458,3 +463,6 @@ class GeocodeCN:
 
         # 热更新配置
         self.read_config()
+
+    def detect_encoding(self, file_path: str) -> str:
+        return detect_encoding(file_path)

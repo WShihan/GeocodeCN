@@ -2,6 +2,7 @@
 import json
 import urllib
 import math
+import chardet
 import urllib.parse
 from urllib import request
 import os
@@ -25,13 +26,17 @@ class Geocoding:
         :param address:需要解析的地址
         :return:
         """
-        geocoding = {'s': 'rsv3',
-                     'key': self.api_key,
-                     'city': '全国',
-                     'address': address}
-        #geocoding = urllib.urlencode(geocoding)
+        geocoding = {
+            's': 'rsv3',
+            'key': self.api_key,
+            'city': '全国',
+            'address': address,
+        }
+        # geocoding = urllib.urlencode(geocoding)
         geocoding = urllib.parse.urlencode(geocoding)
-        ret = request.urlopen("%s?%s" % ("http://restapi.amap.com/v3/geocode/geo", geocoding))
+        ret = request.urlopen(
+            "%s?%s" % ("http://restapi.amap.com/v3/geocode/geo", geocoding)
+        )
 
         if ret.getcode() == 200:
             res = ret.read()
@@ -134,26 +139,44 @@ def wgs84_to_bd09(lon, lat):
 
 
 def _transformlat(lng, lat):
-    ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + \
-          0.1 * lng * lat + 0.2 * math.sqrt(math.fabs(lng))
-    ret += (20.0 * math.sin(6.0 * lng * pi) + 20.0 *
-            math.sin(2.0 * lng * pi)) * 2.0 / 3.0
-    ret += (20.0 * math.sin(lat * pi) + 40.0 *
-            math.sin(lat / 3.0 * pi)) * 2.0 / 3.0
-    ret += (160.0 * math.sin(lat / 12.0 * pi) + 320 *
-            math.sin(lat * pi / 30.0)) * 2.0 / 3.0
+    ret = (
+        -100.0
+        + 2.0 * lng
+        + 3.0 * lat
+        + 0.2 * lat * lat
+        + 0.1 * lng * lat
+        + 0.2 * math.sqrt(math.fabs(lng))
+    )
+    ret += (
+        (20.0 * math.sin(6.0 * lng * pi) + 20.0 * math.sin(2.0 * lng * pi)) * 2.0 / 3.0
+    )
+    ret += (20.0 * math.sin(lat * pi) + 40.0 * math.sin(lat / 3.0 * pi)) * 2.0 / 3.0
+    ret += (
+        (160.0 * math.sin(lat / 12.0 * pi) + 320 * math.sin(lat * pi / 30.0))
+        * 2.0
+        / 3.0
+    )
     return ret
 
 
 def _transformlng(lng, lat):
-    ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + \
-          0.1 * lng * lat + 0.1 * math.sqrt(math.fabs(lng))
-    ret += (20.0 * math.sin(6.0 * lng * pi) + 20.0 *
-            math.sin(2.0 * lng * pi)) * 2.0 / 3.0
-    ret += (20.0 * math.sin(lng * pi) + 40.0 *
-            math.sin(lng / 3.0 * pi)) * 2.0 / 3.0
-    ret += (150.0 * math.sin(lng / 12.0 * pi) + 300.0 *
-            math.sin(lng / 30.0 * pi)) * 2.0 / 3.0
+    ret = (
+        300.0
+        + lng
+        + 2.0 * lat
+        + 0.1 * lng * lng
+        + 0.1 * lng * lat
+        + 0.1 * math.sqrt(math.fabs(lng))
+    )
+    ret += (
+        (20.0 * math.sin(6.0 * lng * pi) + 20.0 * math.sin(2.0 * lng * pi)) * 2.0 / 3.0
+    )
+    ret += (20.0 * math.sin(lng * pi) + 40.0 * math.sin(lng / 3.0 * pi)) * 2.0 / 3.0
+    ret += (
+        (150.0 * math.sin(lng / 12.0 * pi) + 300.0 * math.sin(lng / 30.0 * pi))
+        * 2.0
+        / 3.0
+    )
     return ret
 
 
@@ -170,6 +193,7 @@ def out_of_china(lng, lat):
 def dir_maker():
     if not os.path.exists('./output'):
         os.makedirs('./output')
+
 
 def load_config(config_path):
     if os.path.exists(config_path):
@@ -204,12 +228,25 @@ class CrsTypeEnum(Enum):
     bd2gcj = 2
 
 
-
-
+def detect_encoding(file_path: str) -> str:
+    with open(file_path, 'rb') as file:
+        raw_data = file.read(1000000)  # 读取前1MB
+        result = chardet.detect(raw_data)
+        if result is None:
+            return ''
+        if result['confidence'] < 0.5:
+            return ''
+        elif result['encoding'] == 'ansi':
+            return 'utf8'
+        encoding = result['encoding']
+        confidence = result['confidence']
+        print(f"Detected encoding: {encoding} with confidence {confidence}")
+        return encoding
 
 
 if __name__ == '__main__':
-    lng = 128.543
-    lat = 37.065
-    res = bd09_to_wgs84(lng,lat)
-    print(CrsTypeEnum.bd2wgs)
+    # lng = 128.543
+    # lat = 37.065
+    # res = bd09_to_wgs84(lng, lat)
+    # print(CrsTypeEnum.bd2wgs)
+    print(detect_encoding('/Users/wsh/Desktop/university.csv'))
