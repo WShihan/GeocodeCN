@@ -273,7 +273,6 @@ class GeocodeCN:
         """
         自定义信号槽，接收子线程坐标信号
         """
-        self.iface.messageBar().pushMessage(self.tr("已完成"), Qgis.Success)
         value = self.dlg.pb.value()
         self.dlg.pb.setValue(value + 1)
         if len(result) > 1 and result[-1] == '':
