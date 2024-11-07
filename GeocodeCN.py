@@ -96,6 +96,7 @@ class GeocodeCN:
         self.delimiter: str = ''
         self.encoding: str = ''
         self.address_list = []
+        self.concurrent = 10
         self.config = Config()
         self.read_config()
 
@@ -194,7 +195,9 @@ class GeocodeCN:
             if self.file_selected and len(self.locs) == 0:
                 col_sel = self.dlg.cb.currentText()
                 handler = self.detect_geocoder()
-                self.th = CrsGen(self.address_list, col_sel, handler)
+                self.th = CrsGen(
+                    self.address_list, col_sel, handler, concurrent=self.concurrent
+                )
                 # 单次匹配完成回调
                 self.th.row_signal.connect(self.collect_and_print)
                 # 所有匹配完成回调

@@ -197,14 +197,15 @@ class CrsGen(QThread):
     row_signal = pyqtSignal(list)
     finish_signal = pyqtSignal(list)
 
-    def __init__(self, reader, col_select, geocoder: Geocoder):
+    def __init__(self, reader, col_select, geocoder: Geocoder, concurrent=10):
         super(CrsGen, self).__init__()
         self.reader = reader
         self.col_select = col_select
         self.geocoder = geocoder
+        self.concurrent = concurrent
 
     def run(self):
-        worker = Worker(10)
+        worker = Worker(self.concurrent)
         tasks = []
         for r in self.reader:
             address = r[self.col_select]
