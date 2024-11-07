@@ -251,8 +251,6 @@ class CrsGen(QThread):
             if len(res) > 0:
                 if res[0] == 1:
                     self.signal.emit([address, attr, res[1]])
-                else:
-                    self.signal.emit([])
             else:
                 self.signal.emit([])
 
