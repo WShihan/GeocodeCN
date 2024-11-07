@@ -179,8 +179,7 @@ class GeocodeCN:
             self.iface.removeToolBarIcon(action)
 
     def window_show_eventHandler(self, evt):
-        pass
-        # self.read_config()
+        self.read_config()
 
     def run(self):
         self.dlg.show()

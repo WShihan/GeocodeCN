@@ -4,4 +4,5 @@ test.csv
 __pycache__/
 .vscode/
 *.env
+*.csv
 
