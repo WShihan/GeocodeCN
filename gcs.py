@@ -120,14 +120,11 @@ class Nominatim(Geocoder):
         response = get(self.api, headers=self.headers, params=params)
         if response.status_code == 200:
             data = response.json()
-            print(data)
             if data:
                 return (1, [data[0]['lon'], data[0]['lat']])
             else:
-                print(response.text)
                 return (0, ['NA', 'NA'])
         else:
-            print(response.text)
             return (0, ['NA', 'NA'])
 
 
@@ -146,7 +143,6 @@ class Here(Geocoder):
         response = get(self.api, headers=self.headers, params=params)
         if response.status_code == 200:
             data = response.json()
-            print(data)
             if data and data['items']:
                 return (
                     1,
@@ -156,10 +152,8 @@ class Here(Geocoder):
                     ],
                 )
             else:
-                print(response.text)
                 return (0, ['NA', 'NA'])
         else:
-            print(response.text)
             return (0, ['NA', 'NA'])
 
 
@@ -185,7 +179,6 @@ class Mapbox(Geocoder):
         response = get(self.api, headers=self.headers, params=params)
         if response.status_code == 200:
             data = response.json()
-            print(data)
             if data['features'] and data['features'][0]:
                 return (
                     1,
@@ -195,10 +188,8 @@ class Mapbox(Geocoder):
                     ],
                 )
             else:
-                print(response.text)
                 return (0, ['NA', 'NA'])
         else:
-            print(response.text)
             return (0, ['NA', 'NA'])
 
 
@@ -227,13 +218,13 @@ class CrsGen(QThread):
             res = self.geocoder.search(address)
             if len(res) > 0:
                 if res[0] == 1:
-                    self.row_signal.emit([address, attr, res[1]])
+                    self.row_signal.emit([address, attr, res[1], ''])
                 else:
-                    self.row_signal.emit([address])
+                    raise Exception("无地址数据！")
             else:
-                self.row_signal.emit([address])
+                raise Exception("无地址数据！")
         except Exception as e:
-            self.row_signal.emit([])
+            self.row_signal.emit([address, [], [], f'错误：{str(e)}'])
 
 
 if __name__ == '__main__':

@@ -269,26 +269,29 @@ class GeocodeCN:
         except Exception as e:
             QMessageBox.information(self.dlg, '状态', str(e), QMessageBox.Ok)
 
-    def collect_and_print(self, location):
+    def collect_and_print(self, result):
         """
         自定义信号槽，接收子线程坐标信号
         """
         self.iface.messageBar().pushMessage(self.tr("已完成"), Qgis.Success)
         value = self.dlg.pb.value()
         self.dlg.pb.setValue(value + 1)
-        if len(location) > 1:
-            loc = location[-1]
-            address = location[0]
-            attr = location[1]
+        if len(result) > 1 and result[-1] == '':
+            address = result[0]
+            attr = result[1]
+            loc = result[2]
+            print(result)
             self.locs.append(attr + loc)
             self.dlg.tb_loc.append(
-                "地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<58}".format(
+                "地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<100}".format(
                     address, loc[0], loc[1], ""
                 )
             )
         else:
             self.dlg.tb_loc.append(
-                "地址：{:<50}未获取到坐标 \n{:#<50}".format(location[0], "")
+                "地址：{:<50}未获取到坐标 \t 原因：{:<50} \n{:#<50}".format(
+                    result[0], result[-1], ""
+                )
             )
 
     def geocoding_finished(self, res):
