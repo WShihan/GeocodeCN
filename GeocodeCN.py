@@ -315,7 +315,7 @@ class GeocodeCN:
                 )
                 if output_file:
                     writer = csv.writer(
-                        open(output_file, 'a', encoding="gbk", newline=""),
+                        open(output_file, 'a', encoding=self.encoding, newline=""),
                         delimiter=self.delimiter,
                     )
                     writer.writerow(self.fields + ['lon', 'lat'])
