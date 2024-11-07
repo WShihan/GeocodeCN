@@ -92,8 +92,9 @@ class GeocodeCN:
             "WGS84": CrsTypeEnum.bd2wgs,
             "国测局坐标系": CrsTypeEnum.bd2gcj,
         }
-        self.running = False
-        self.delimiter = None
+        self.running: bool = False
+        self.delimiter: str = ''
+        self.encoding: str = ''
         self.address_list = []
         self.config = Config()
         self.read_config()
@@ -222,8 +223,8 @@ class GeocodeCN:
                 self.file_selected = True
                 self.dlg.le_file.setText(file_name)
                 csv_path = self.dlg.le_file.text()
-                encoding = self.dlg.cb_encoding.currentText()
-                csv_detect = self.csv_detect(csv_path, encoding)
+                self.encoding = self.dlg.cb_encoding.currentText()
+                csv_detect = self.csv_detect(csv_path, self.encoding)
                 if len(csv_detect) == 0:
                     raise Exception("解析CSV错误！")
                 else:
@@ -320,7 +321,7 @@ class GeocodeCN:
                     # QMessageBox.information(self.dlg, '状态', '保存成功！', QMessageBox.Yes)
                     self.dlg.setWindowTitle("GeocodeCN-已保存")
                 else:
-                    raise Exception("保持出错！")
+                    raise Exception("保存出错!")
             else:
                 raise FileNotFoundError("无坐标数据！")
         except Exception as e:
