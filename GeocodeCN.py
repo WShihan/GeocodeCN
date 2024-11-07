@@ -284,17 +284,25 @@ class GeocodeCN:
         """
         value = self.dlg.pb.value()
         self.dlg.pb.setValue(value + 1)
-        if len(result) > 1 and result[-1] == '':
+        if len(result) > 1:
             address = result[0]
             attr = result[1]
             loc = result[2]
             print(result)
-            self.locs.append(attr + loc)
-            self.dlg.tb_loc.append(
-                "地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<100}".format(
-                    address, loc[0], loc[1], ""
+            if result[-1] == '':
+                self.locs.append(attr + loc)
+                self.dlg.tb_loc.append(
+                    "地址：{:<50}\n经度：{:<20}\t纬度：{:<20} \n{:-<100}".format(
+                        address, loc[0], loc[1], ""
+                    )
                 )
-            )
+            else:
+                self.locs.append(attr + loc)
+                self.dlg.tb_loc.append(
+                    "地址：{:<50}未获取到坐标 \t 原因：{:<50} \n{:#<50}".format(
+                        result[0], result[-1], ""
+                    )
+                )
         else:
             self.dlg.tb_loc.append(
                 "地址：{:<50}未获取到坐标 \t 原因：{:<50} \n{:#<50}".format(
@@ -340,6 +348,7 @@ class GeocodeCN:
         添加临时图层至地图窗口
         """
         try:
+            print(self.locs)
             # 是否含有编码数据
             if len(self.locs) != 0:
                 # 创建临时图层
@@ -355,10 +364,14 @@ class GeocodeCN:
                 for r in self.locs:
                     y = r[-1]
                     x = r[-2]
+                    if x == 'NA' or y == 'NA':
+                        continue
                     # 创建要素
                     f = QgsFeature()
                     # 设置要素几何
-                    f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x, y)))
+                    f.setGeometry(
+                        QgsGeometry.fromPointXY(QgsPointXY(float(x), float(y)))
+                    )
                     # 添加字段数据
                     f.setAttributes(r)
                     pr.addFeature(f)

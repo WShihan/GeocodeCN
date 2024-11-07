@@ -225,7 +225,7 @@ class CrsGen(QThread):
             else:
                 raise Exception("无地址数据！")
         except Exception as e:
-            self.row_signal.emit([address, [], [], f'错误：{str(e)}'])
+            self.row_signal.emit([address, attr, ['NA', 'NA'], f'错误：{str(e)}'])
 
 
 if __name__ == '__main__':

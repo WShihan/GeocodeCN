@@ -390,7 +390,7 @@ class Ui_GeocodeCNDialogBase(object):
         self.label.setText(_translate("GeocodeCNDialogBase", "地址列"))
         self.lbl_encoding.setToolTip(_translate("GeocodeCNDialogBase", "用作地理编码的列"))
         self.lbl_encoding.setText(_translate("GeocodeCNDialogBase", "编码"))
-        self.btn_start.setText(_translate("GeocodeCNDialogBase", "应用"))
+        self.btn_start.setText(_translate("GeocodeCNDialogBase", "开始"))
         self.groupBox.setTitle(_translate("GeocodeCNDialogBase", "单个"))
         self.leAddress.setPlaceholderText(_translate("GeocodeCNDialogBase", "在此输入地址名称，尽量详细"))
         self.btnSingle.setToolTip(_translate("GeocodeCNDialogBase", "获取该地址坐标"))
