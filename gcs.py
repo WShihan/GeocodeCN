@@ -6,8 +6,9 @@
 from requests import get
 from requests import Session
 import json
-from .utils import bd09_to_wgs84, bd09_to_gcj02, CrsTypeEnum
 from qgis.PyQt.QtCore import QThread, pyqtSignal
+from .utils import bd09_to_wgs84, bd09_to_gcj02, CrsTypeEnum
+from .worker import Worker
 
 
 class Geocoder:
@@ -45,10 +46,6 @@ class Baidu(Geocoder):
         """
         super().__init__()
         self.session = Session()
-        self.ua = (
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-            'Chrome/88.0.4324.146 Safari/537.36 '
-        )
         self.url = 'http://api.map.baidu.com/geocoding/v3/'
         self.__params = {'address': '', 'output': 'json', 'ak': key}
         self.trans = transform
@@ -73,7 +70,7 @@ class Baidu(Geocoder):
         res = self.session.get(
             url=self.url,
             params=self.__params,
-            headers={'user-agent': self.ua},
+            headers=self.headers,
             timeout=10,
         )
         if res.status_code == 200:
@@ -81,7 +78,6 @@ class Baidu(Geocoder):
             if 'result' in json.loads(res.text):
                 res_json = json.loads(res.text)['result']
                 loc_raw = res_json['location']
-                comprehension = res_json['comprehension']
                 if self.trans == CrsTypeEnum.bd2wgs:
                     loc = bd09_to_wgs84(loc_raw['lng'], loc_raw['lat'])
                 elif self.trans == CrsTypeEnum.bd2gcj:
@@ -115,28 +111,18 @@ class Nominatim(Geocoder):
             self.api = proxy
 
     def search(self, address: str) -> tuple:
-        # 设置请求参数
         params = {
             'q': address,  # 要地理编码的地址
             'format': 'json',  # 返回格式
             'limit': 1,  # 限制返回结果数量
             'addressdetails': 1,  # 返回详细地址信息
         }
-        # 发送GET请求
         response = get(self.api, headers=self.headers, params=params)
-        # 检查响应状态
         if response.status_code == 200:
-            # 解析JSON响应
             data = response.json()
             print(data)
             if data:
-                # 返回第一个结果的坐标
                 return (1, [data[0]['lon'], data[0]['lat']])
-                # return {
-                #     'latitude': data[0]['lat'],
-                #     'longitude': data[0]['lon'],
-                #     'address': data[0]['display_name'],
-                # }
             else:
                 print(response.text)
                 return (0, ['NA', 'NA'])
@@ -154,18 +140,14 @@ class Here(Geocoder):
 
     def search(self, address: str) -> tuple:
         params = {
-            'q': address,  # 要地理编码的地址
+            'q': address,
             'apikey': self.key,
         }
-        # 发送GET请求
         response = get(self.api, headers=self.headers, params=params)
-        # 检查响应状态
         if response.status_code == 200:
-            # 解析JSON响应
             data = response.json()
             print(data)
             if data and data['items']:
-                # 返回第一个结果的坐标
                 return (
                     1,
                     [
@@ -173,11 +155,6 @@ class Here(Geocoder):
                         data['items'][0]['position']['lat'],
                     ],
                 )
-                # return {
-                #     'latitude': data['items'][0]['position']['lat'],
-                #     'longitude': data['items'][0]['position']['lng'],
-                #     'address': data['items'][0]['address']['label'],
-                # }
             else:
                 print(response.text)
                 return (0, ['NA', 'NA'])
@@ -201,19 +178,15 @@ class Mapbox(Geocoder):
         address: str,
     ) -> tuple:
         params = {
-            'q': address,  # 要地理编码的地址
+            'q': address,
             'access_token': self.key,
             'proximity': 'ip',
         }
-        # 发送GET请求
         response = get(self.api, headers=self.headers, params=params)
-        # 检查响应状态
         if response.status_code == 200:
-            # 解析JSON响应
             data = response.json()
             print(data)
             if data['features'] and data['features'][0]:
-                # 返回第一个结果的坐标
                 return (
                     1,
                     [
@@ -221,11 +194,6 @@ class Mapbox(Geocoder):
                         data['features'][0]['geometry']['coordinates'][1],
                     ],
                 )
-                # return {
-                #     'longitude': data['features'][0]['geometry']['coordinates'][0],
-                #     'latitude': data['features'][0]['geometry']['coordinates'][1],
-                #     'address': data['features'][0]['properties']['full_address'],
-                # }
             else:
                 print(response.text)
                 return (0, ['NA', 'NA'])
@@ -235,7 +203,8 @@ class Mapbox(Geocoder):
 
 
 class CrsGen(QThread):
-    signal = pyqtSignal(list)
+    row_signal = pyqtSignal(list)
+    finish_signal = pyqtSignal(list)
 
     def __init__(self, reader, col_select, geocoder: Geocoder):
         super(CrsGen, self).__init__()
@@ -244,18 +213,30 @@ class CrsGen(QThread):
         self.geocoder = geocoder
 
     def run(self):
+        worker = Worker(10)
+        tasks = []
         for r in self.reader:
             address = r[self.col_select]
             attr = [r[i] for i in r.keys()]
+            tasks.append(worker.submit_task(self.execute, address, attr))
+        worker.wait_for_completion(tasks)
+        self.finish_signal.emit([])
+
+    def execute(self, address: str, attr: list):
+        try:
             res = self.geocoder.search(address)
             if len(res) > 0:
                 if res[0] == 1:
-                    self.signal.emit([address, attr, res[1]])
+                    self.row_signal.emit([address, attr, res[1]])
+                else:
+                    self.row_signal.emit([address])
             else:
-                self.signal.emit([])
+                self.row_signal.emit([address])
+        except Exception as e:
+            self.row_signal.emit([])
 
 
 if __name__ == '__main__':
-    b = Baidu(ak='')
+    b = Baidu(key='')
     res = b.search("北京市")
     print(res)
