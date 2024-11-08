@@ -23,7 +23,6 @@
 import csv
 import encodings
 import os
-import chardet
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QVariant
@@ -37,9 +36,10 @@ from qgis.core import (
     Qgis,
 )
 from qgis.PyQt.QtWidgets import QFileDialog, QAction, QMessageBox
-from .gcs import Baidu, CrsGen, Nominatim, Here, Mapbox, Geocoder
-from .utils import CrsTypeEnum, detect_encoding
-from .config import Config
+from .geocoder_adapter import GeocoderAdapter
+from .core.gcs import Baidu, Nominatim, Here, Mapbox, Geocoder, Gaode, GEOCODER_MAP
+from .core.utils import CrsTypeEnum, detect_encoding
+from .core.config import Config
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -162,6 +162,9 @@ class GeocodeCN:
         self.first_start = True
         if self.first_start:
             self.first_start = False
+            # 添加参数
+            self.dlg.cb_encoding.addItems(sorted(encodings.aliases.aliases.keys()))
+            self.dlg.cb_service.addItems(GEOCODER_MAP.keys())
             # 绑定信号
             self.dlg.btn_file.clicked.connect(self.on_csv_select)
             self.dlg.btn_start.clicked.connect(self.on_geocode_bach)
@@ -194,7 +197,7 @@ class GeocodeCN:
             if self.file_selected and len(self.locs) == 0:
                 col_sel = self.dlg.cb.currentText()
                 handler = self.detect_geocoder()
-                self.th = CrsGen(
+                self.th = GeocoderAdapter(
                     self.address_list, col_sel, handler, concurrent=self.concurrent
                 )
                 # 单次匹配完成回调
@@ -412,21 +415,24 @@ class GeocodeCN:
         self.dlg.pb.setValue(0)
 
     def detect_geocoder(self) -> Geocoder:
-
         service = self.config.active_service
-        if service == '百度地图':
+        if service == Baidu.flag:
             if self.config.baidu_key == '':
                 raise FileNotFoundError("请先在配置中填写百度地图的key！")
             crs = self.crsMap[self.dlg.cb_crs.currentText()]
             return Baidu(self.config.baidu_key, transform=crs)
-        elif service == 'Here':
+        elif service == Here.flag:
             if self.config.here_key == '':
                 raise FileNotFoundError("请先在配置中填写Here的key！")
             return Here(self.config.here_key)
-        elif service == 'Mapbox':
+        elif service == Mapbox.flag:
             if self.config.mapbox_key == '':
                 raise FileNotFoundError("请先在配置中填写Mapbox的key！")
             return Mapbox(self.config.mapbox_key)
+        elif service == Gaode.flag:
+            if self.config.gaode_key == '':
+                raise FileNotFoundError("请先在配置中填写高德地图的key！")
+            return Gaode(self.config.gaode_key)
         else:
             if self.config.osm_proxy:
                 return Nominatim(proxy=self.config.osm_proxy)
@@ -455,15 +461,16 @@ class GeocodeCN:
         self.config.active_service = self.settings.value('ACTIVE_SERVICE')
         self.config.baidu_key = self.settings.value('BAIDU_KEY')
         self.config.here_key = self.settings.value('HERE_KEY')
+        self.config.gaode_key = self.settings.value('GAODE_KEY')
         self.config.mapbox_key = self.settings.value('MAPBOX_KEY')
         self.config.osm_proxy = self.settings.value('OSM_PROXY')
 
-        self.dlg.cb_encoding.addItems(sorted(encodings.aliases.aliases.keys()))
         self.dlg.cb_encoding.setCurrentText('utf8')
         self.dlg.cb_service.setCurrentText(self.config.active_service)
         self.dlg.cb_crs.setCurrentText(self.config.baidu_crs)
         self.dlg.le_key_baidu.setText(self.config.baidu_key)
         self.dlg.le_key_here.setText(self.config.here_key)
+        self.dlg.le_key_gaode.setText(self.config.gaode_key)
         self.dlg.le_key_mapbox.setText(self.config.mapbox_key)
         self.dlg.le_proxy_osm.setText(self.config.osm_proxy)
 
@@ -472,6 +479,7 @@ class GeocodeCN:
         self.settings.setValue('BAIDU_KEY', self.dlg.le_key_baidu.text())
         self.settings.setValue('MAPBOX_KEY', self.dlg.le_key_mapbox.text())
         self.settings.setValue('HERE_KEY', self.dlg.le_key_here.text())
+        self.settings.setValue('GAODE_KEY', self.dlg.le_key_gaode.text())
         self.settings.setValue('OSM_PROXY', self.dlg.le_proxy_osm.text())
         self.settings.setValue('ACTIVE_SERVICE', self.dlg.cb_service.currentText())
         self.set_tip(self.tr("配置已保存"), Qgis.Success)  # type: ignore

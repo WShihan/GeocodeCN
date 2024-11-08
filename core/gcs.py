@@ -6,13 +6,16 @@
 from requests import get
 from requests import Session
 import json
-from qgis.PyQt.QtCore import QThread, pyqtSignal
 from .utils import bd09_to_wgs84, bd09_to_gcj02, CrsTypeEnum
-from .worker import Worker
 
 
 class Geocoder:
+    flag = '未知'
+
     def __init__(self) -> None:
+        # 服务接口地址
+        self.api: str = ''
+        # 请求头
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
             "Referer": "https://wsh233.cn",
@@ -22,23 +25,9 @@ class Geocoder:
         return (0, ['NA', 'NA'])
 
 
-class POI(object):
-    def __init__(self, name, lon, lat, confidence, attr):
-        """:arg
-        name: 地址名称
-        lon: 经度
-        lat: 纬度
-        confidence: 地址理解程度
-        attr: 其他字段信息
-        """
-        self.name = name
-        self.lon = lon
-        self.lat = lat
-        self.attr = attr
-        self.confidence = confidence
-
-
 class Baidu(Geocoder):
+    flag = "百度地图"
+
     def __init__(self, key: str, transform=CrsTypeEnum.bd):
         """:arg
         ak: appKey
@@ -46,11 +35,12 @@ class Baidu(Geocoder):
         """
         super().__init__()
         self.session = Session()
-        self.url = 'http://api.map.baidu.com/geocoding/v3/'
+        self.api = 'http://api.map.baidu.com/geocoding/v3/'
         self.__params = {'address': '', 'output': 'json', 'ak': key}
         self.trans = transform
         self.made = 0
         self.failed = 0
+        self.flag = "百度地图"
 
     @property
     def transform(self):
@@ -68,7 +58,7 @@ class Baidu(Geocoder):
         """
         self.__params['address'] = address
         res = self.session.get(
-            url=self.url,
+            url=self.api,
             params=self.__params,
             headers=self.headers,
             timeout=10,
@@ -103,10 +93,12 @@ class Baidu(Geocoder):
 
 
 class Nominatim(Geocoder):
+    flag = 'OSM'
 
     def __init__(self, proxy=None) -> None:
         super().__init__()
         self.api = 'https://nominatim.openstreetmap.org/search'
+        self.flag = 'OSM'
         if proxy:
             self.api = proxy
 
@@ -129,11 +121,13 @@ class Nominatim(Geocoder):
 
 
 class Here(Geocoder):
+    flag = 'Here'
 
     def __init__(self, key: str) -> None:
         super().__init__()
         self.key = key
         self.api = 'https://geocode.search.hereapi.com/v1/geocode'
+        self.flag = 'Here'
 
     def search(self, address: str) -> tuple:
         params = {
@@ -158,6 +152,7 @@ class Here(Geocoder):
 
 
 class Mapbox(Geocoder):
+    flag = 'Mapbox'
 
     def __init__(
         self,
@@ -166,6 +161,7 @@ class Mapbox(Geocoder):
         super().__init__()
         self.key = key
         self.api = 'https://api.mapbox.com/search/geocode/v6/forward'
+        self.flag = 'Mapbox'
 
     def search(
         self,
@@ -193,42 +189,47 @@ class Mapbox(Geocoder):
             return (0, ['NA', 'NA'])
 
 
-class CrsGen(QThread):
-    row_signal = pyqtSignal(list)
-    finish_signal = pyqtSignal(list)
+class Gaode(Geocoder):
+    flag = '高德地图'
 
-    def __init__(self, reader, col_select, geocoder: Geocoder, concurrent=10):
-        super(CrsGen, self).__init__()
-        self.reader = reader
-        self.col_select = col_select
-        self.geocoder = geocoder
-        self.concurrent = concurrent
+    def __init__(self, key: str) -> None:
+        super().__init__()
+        self.api = 'https://restapi.amap.com/v3/geocode/geo'
+        self.flag = '高德地图'
+        self.key: str = key
 
-    def run(self):
-        worker = Worker(self.concurrent)
-        tasks = []
-        for r in self.reader:
-            address = r[self.col_select]
-            attr = [r[i] for i in r.keys()]
-            tasks.append(worker.submit_task(self.execute, address, attr))
-        worker.wait_for_completion(tasks)
-        self.finish_signal.emit([])
-
-    def execute(self, address: str, attr: list):
-        try:
-            res = self.geocoder.search(address)
-            if len(res) > 0:
-                if res[0] == 1:
-                    self.row_signal.emit([address, attr, res[1], ''])
-                else:
-                    raise Exception("无地址数据！")
+    def search(self, address) -> tuple:
+        params = {
+            "key": self.key,
+            "address": address,
+            "output": "json",
+        }
+        resp = get(self.api, headers=self.headers, params=params)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data['status'] == 1:
+                return (
+                    1,
+                    [
+                        data['geocodes'][0]['location'].split(',')[0],
+                        data['geocodes'][0]['location'].split(',')[1],
+                    ],
+                )
             else:
-                raise Exception("无地址数据！")
-        except Exception as e:
-            self.row_signal.emit([address, attr, ['NA', 'NA'], f'错误：{str(e)}'])
+                return (0, ['NA', 'NA'])
+        else:
+            return (0, ['NA', 'NA'])
 
+
+# 地理编码器集合
+GEOCODER_MAP = {
+    "百度地图": Baidu,
+    "高德地图": Gaode,
+    "Mapbox": Mapbox,
+    "Here": Here,
+    "OSM": Nominatim,
+}
 
 if __name__ == '__main__':
-    b = Baidu(key='')
-    res = b.search("北京市")
-    print(res)
+    gaode = Gaode("您的高德地图key")
+    print(gaode.search("北京市海淀区上地十街10号"))

@@ -16,6 +16,12 @@ a = 6378245.0  # 长半轴
 ee = 0.00669342162296594323  # 偏心率平方
 
 
+class CrsTypeEnum(Enum):
+    bd = 0
+    bd2wgs = 1
+    bd2gcj = 2
+
+
 class Geocoding:
     def __init__(self, api_key):
         self.api_key = api_key
@@ -203,31 +209,6 @@ def load_config(config_path):
         raise FileExistsError("该配置文件不存在,请检查文件名称是否正确！")
 
 
-# 重写线程类
-class MyThread(threading.Thread):
-    def __init__(self, func, args=()):
-        super(MyThread, self).__init__()
-        self.func = func
-        self.args = args
-
-    def run(self):
-        self.result = self.func(*self.args)
-        return self.result
-
-    def get_loc(self):
-        threading.Thread.join(self)
-        try:
-            return self.result
-        except BaseException:
-            return None
-
-
-class CrsTypeEnum(Enum):
-    bd = 0
-    bd2wgs = 1
-    bd2gcj = 2
-
-
 def detect_encoding(file_path: str) -> str:
     with open(file_path, 'rb') as file:
         raw_data = file.read(1000000)  # 读取前1MB
@@ -248,5 +229,4 @@ if __name__ == '__main__':
     # lng = 128.543
     # lat = 37.065
     # res = bd09_to_wgs84(lng, lat)
-    # print(CrsTypeEnum.bd2wgs)
     print(detect_encoding('/Users/wsh/Desktop/university.csv'))

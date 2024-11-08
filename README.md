@@ -41,7 +41,7 @@ GeocodeCN是一个QGIS插件，用于地理编码，地址——> 坐标，其�
 
 点击`installed`查看是否安装成功
 
-<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20240811024354440.png" alt="image-20240811024354440" style="width:100%;" />
+<img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20241109001045554.png" alt="image-20240811024354440" style="width:100%;" />
 
 
 
