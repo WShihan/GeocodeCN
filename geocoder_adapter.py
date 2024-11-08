@@ -31,13 +31,12 @@ class GeocoderAdapter(QThread):
 
     def execute(self, address: str, attr: list):
         try:
-            res = self.geocoder.search(address)
-            if len(res) > 0:
-                if res[0] == 1:
-                    self.row_signal.emit([address, attr, res[1], ''])
-                else:
-                    raise Exception("无地址数据！")
+            location = self.geocoder.search(address)
+            if location.status:
+                self.row_signal.emit(
+                    [address, attr, [location.longitude, location.latitude], '']
+                )
             else:
-                raise Exception("无地址数据！")
+                raise Exception(location.msg)
         except Exception as e:
-            self.row_signal.emit([address, attr, ['NA', 'NA'], f'错误：{str(e)}'])
+            self.row_signal.emit([address, attr, [None, None], f'错误：{str(e)}'])

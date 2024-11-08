@@ -261,17 +261,16 @@ class GeocodeCN:
             handler = self.detect_geocoder()
             address = self.dlg.leAddress.text()
             self.fields: list = ['地址']
-            res = handler.search(address)
-            if len(res) > 0:
-                if res[0] == 1:
-                    loc = res[1]
-                    self.locs.clear()
-                    self.locs.append([address] + loc)
-                    self.dlg.tb_loc.append(
-                        "地址：{:<100}\n经度：{:<50}\t纬度：{:<50} \n{:-<58}".format(
-                            address, loc[0], loc[1], ""
-                        )
+            location = handler.search(address)
+            if location.status:
+                loc = [location.longitude, location.latitude]
+                self.locs.clear()
+                self.locs.append([address] + loc)
+                self.dlg.tb_loc.append(
+                    "地址：{:<100}\n经度：{:<50}\t纬度：{:<50} \n{:-<58}".format(
+                        address, loc[0], loc[1], ""
                     )
+                )
                 self.dlg.pb.setValue(10)
                 self.set_tip(self.tr("匹配完成！"), Qgis.Success)  # type: ignore
             else:
