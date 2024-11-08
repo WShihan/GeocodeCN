@@ -6,13 +6,13 @@
 name=GeocodeCN
 qgisMinimumVersion=3.0
 description=一个将地址转为经纬度坐标的插件。
-version=0.3.0
+version=0.3.1
 author=WangShihan
 email=3443327820@qq.com
 
 about=基于互联网地图开放平台，将地址转为经纬度坐标。
 
-tracker=https://github.com/WShihan/GeocodeCN
+tracker=https://github.com/WShihan/GeocodeCN/issues
 repository=https://github.com/WShihan/GeocodeCN
 # End of mandatory metadata
 
