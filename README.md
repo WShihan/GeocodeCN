@@ -26,7 +26,13 @@ GeocodeCN是一个QGIS插件，用于地理编码，地址——> 坐标，其�
 
 ### 2.1 安装插件
 
-2.1.1 下载zip格式仓库文件压缩包。
+该插件已发布在QGIS官方插件库，可直接在仓库里查找安装，或者通过下载源码包安装。
+
+2.1.0 通过QGIS插件仓库安装
+
+![image-20241129233401416](https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/typora/image-20241129233401416.png)
+
+2.1.1 通过下载zip格式仓库压缩包安装。
 
 <p align="center">
 <img src="https://md-1301600412.cos.ap-nanjing.myqcloud.com/pic/VWP2zMaL1FDpTxe.png" alt="image-20220110124451366" /></p>
