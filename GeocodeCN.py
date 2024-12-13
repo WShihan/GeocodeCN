@@ -281,7 +281,6 @@ class GeocodeCN:
             address = result[0]
             attr = result[1]
             loc = result[2]
-            print(result)
             if result[-1] == '':
                 self.locs.append(attr + loc)
                 self.dlg.tb_loc.append(
@@ -341,7 +340,6 @@ class GeocodeCN:
         添加临时图层至地图窗口
         """
         try:
-            print(self.locs)
             # 是否含有编码数据
             if len(self.locs) != 0:
                 # 创建临时图层
@@ -357,7 +355,7 @@ class GeocodeCN:
                 for r in self.locs:
                     y = r[-1]
                     x = r[-2]
-                    if x == 'NA' or y == 'NA':
+                    if x == 'NA' or y == 'NA' or x is None or y is None:
                         continue
                     # 创建要素
                     f = QgsFeature()
@@ -458,7 +456,6 @@ class GeocodeCN:
             with open(file_path, 'r', encoding=encoding) as f:
                 reader = csv.DictReader(f, delimiter=sep)
                 fields = reader.fieldnames
-                print(fields)
                 if fields is not None:
                     if len(fields) == 1:
                         if sep == delimiters[-1]:
