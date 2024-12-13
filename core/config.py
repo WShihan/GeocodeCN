@@ -7,3 +7,4 @@ class Config:
         self.here_key = ''
         self.gaode_key = ''
         self.active_service = ''
+        self.cocurrent = 5

@@ -96,7 +96,6 @@ class GeocodeCN:
         self.delimiter: str = ''
         self.encoding: str = ''
         self.address_list = []
-        self.concurrent = 10
         self.config = Config()
         self.read_config()
 
@@ -173,6 +172,7 @@ class GeocodeCN:
             self.dlg.btn_clear.clicked.connect(self.on_clear)
             self.dlg.btnSingle.clicked.connect(self.on_single_geocode)
             self.dlg.btn_apply.clicked.connect(self.on_config_apply)
+            self.dlg.cb_encoding.currentTextChanged.connect(self.on_encoding_change)
             self.dlg.showEvent = self.window_show_eventHandler  # type: ignore
 
     def unload(self):
@@ -198,7 +198,10 @@ class GeocodeCN:
                 col_sel = self.dlg.cb.currentText()
                 handler = self.detect_geocoder()
                 self.th = GeocoderAdapter(
-                    self.address_list, col_sel, handler, concurrent=self.concurrent
+                    self.address_list,
+                    col_sel,
+                    handler,
+                    concurrent=self.config.cocurrent,
                 )
                 # 单次匹配完成回调
                 self.th.row_signal.connect(self.collect_and_print)
@@ -228,25 +231,9 @@ class GeocodeCN:
                 self.file_selected = True
                 self.dlg.le_file.setText(file_name)
                 csv_path = self.dlg.le_file.text()
-                encoding = self.detect_encoding(csv_path)
-                if encoding != '':
-                    self.dlg.cb_encoding.setCurrentText(encoding)
-                    self.encoding = encoding
-                else:
-                    self.encoding = self.dlg.cb_encoding.currentText()
-                csv_detect = self.csv_detect(csv_path, self.encoding)
-                if len(csv_detect) == 0:
-                    raise Exception("解析CSV错误！")
-                else:
-                    self.delimiter = csv_detect[0]
-                    self.fields.clear()
-                    self.fields += csv_detect[1]  # type: ignore
-                    self.address_list.clear()
-                    self.address_list = list(csv_detect[2])
-                    self.dlg.cb.addItems(self.fields)
-                    self.dlg.pb.setMaximum(len(self.address_list))
+                self.load_csv(csv_path)
             else:
-                pass
+                print('未选择文件')
         except Exception as e:
             QMessageBox.information(self.dlg, "状态", str(e), QMessageBox.Yes)
 
@@ -278,6 +265,11 @@ class GeocodeCN:
                 raise Exception("无地址数据！")
         except Exception as e:
             QMessageBox.information(self.dlg, '状态', str(e), QMessageBox.Ok)
+
+    def on_encoding_change(self, encoding_text):
+        csv_path = self.dlg.le_file.text()
+        if csv_path:
+            self.load_csv(csv_path)
 
     def collect_and_print(self, result):
         """
@@ -395,6 +387,27 @@ class GeocodeCN:
         except Exception as e:
             self.set_tip(self.tr("清除成功"), Qgis.Failed)  # type: ignore
 
+    def load_csv(self, csv_path):
+        encoding = self.detect_encoding(csv_path)
+        if encoding != '':
+            self.dlg.cb_encoding.setCurrentText(encoding)
+            self.encoding = encoding
+        else:
+            self.encoding = self.dlg.cb_encoding.currentText()
+        detect_res = self.csv_delimiter_detect(csv_path, self.encoding)
+        if len(detect_res) > 0:
+            self.delimiter = detect_res[0]
+            self.fields.clear()
+            self.fields += detect_res[1]  # type: ignore
+            self.address_list.clear()
+            self.address_list = list(detect_res[2])
+            self.dlg.cb.addItems(self.fields)
+            self.dlg.pb.setMaximum(len(self.address_list))
+        else:
+            QMessageBox.information(
+                self.dlg, "状态", '获取CSV文件字段失败！', QMessageBox.Yes
+            )
+
     def set_tip(self, tip: str, isSuccess: bool):
         if isSuccess:
             responseType = Qgis.Success
@@ -438,16 +451,20 @@ class GeocodeCN:
             else:
                 return Nominatim()
 
-    def csv_detect(self, file_path: str, encoding: str = 'utf-8') -> tuple:
+    def csv_delimiter_detect(self, file_path: str, encoding: str = 'utf-8') -> tuple:
         # 定义常见的分隔符
         delimiters = [',', ';', '\t', '|', ':']
         for sep in delimiters:
             with open(file_path, 'r', encoding=encoding) as f:
                 reader = csv.DictReader(f, delimiter=sep)
                 fields = reader.fieldnames
+                print(fields)
                 if fields is not None:
                     if len(fields) == 1:
-                        continue
+                        if sep == delimiters[-1]:
+                            return (sep, fields, list(reader))
+                        else:
+                            continue
                     else:
                         return (sep, fields, list(reader))
                 else:
@@ -463,6 +480,7 @@ class GeocodeCN:
         self.config.gaode_key = self.settings.value('GAODE_KEY')
         self.config.mapbox_key = self.settings.value('MAPBOX_KEY')
         self.config.osm_proxy = self.settings.value('OSM_PROXY')
+        self.config.cocurrent = self.settings.value('COCURRENT')
 
         self.dlg.cb_encoding.setCurrentText('utf8')
         self.dlg.cb_service.setCurrentText(self.config.active_service)
@@ -472,6 +490,10 @@ class GeocodeCN:
         self.dlg.le_key_gaode.setText(self.config.gaode_key)
         self.dlg.le_key_mapbox.setText(self.config.mapbox_key)
         self.dlg.le_proxy_osm.setText(self.config.osm_proxy)
+        if self.config.cocurrent:
+            self.dlg.sp_cocurrent.setValue(int(self.config.cocurrent))
+        else:
+            self.dlg.sp_cocurrent.setValue(3)
 
     def on_config_apply(self):
         self.settings.setValue('BAIDU_CRS', self.dlg.cb_crs.currentText())
@@ -481,8 +503,9 @@ class GeocodeCN:
         self.settings.setValue('GAODE_KEY', self.dlg.le_key_gaode.text())
         self.settings.setValue('OSM_PROXY', self.dlg.le_proxy_osm.text())
         self.settings.setValue('ACTIVE_SERVICE', self.dlg.cb_service.currentText())
-        self.set_tip(self.tr("配置已保存"), Qgis.Success)  # type: ignore
+        self.settings.setValue('COCURRENT', self.dlg.sp_cocurrent.value())
 
+        self.set_tip(self.tr("配置已保存"), Qgis.Success)  # type: ignore
         # 热更新配置
         self.read_config()
 

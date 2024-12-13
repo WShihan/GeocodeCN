@@ -531,8 +531,8 @@ border-radius: 5%;</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>470</width>
-            <height>509</height>
+            <width>455</width>
+            <height>522</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -545,11 +545,23 @@ border-radius: 5%;</string>
               <string notr="true">color:#428bca</string>
              </property>
              <property name="title">
-              <string>激活哪一个服务</string>
+              <string>当前使用</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_11">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="QLabel" name="lb_service">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>地图服务</string>
+                  </property>
+                 </widget>
+                </item>
                 <item>
                  <widget class="QComboBox" name="cb_service">
                   <property name="sizePolicy">
@@ -572,6 +584,35 @@ border-radius: 5%;</string>
                   </property>
                   <property name="currentText">
                    <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_15">
+                <item>
+                 <widget class="QLabel" name="lb_cocurrent">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>并发数量</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="sp_cocurrent">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>3</number>
                   </property>
                  </widget>
                 </item>
@@ -688,10 +729,10 @@ border-radius: 5%;</string>
                    </size>
                   </property>
                   <property name="text">
-                   <string>高德地图密钥</string>
+                   <string/>
                   </property>
                   <property name="placeholderText">
-                   <string>Mapbox平台密钥</string>
+                   <string>高德地图密钥</string>
                   </property>
                  </widget>
                 </item>
